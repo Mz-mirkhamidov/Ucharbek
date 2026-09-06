@@ -7,6 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // -------------------------------------------------------------
   const langButtons = document.querySelectorAll('.lang-btn');
 
+  function updateSlideTranslations(dict) {
+    if (!dict || !dict.slides) return;
+    dict.slides.forEach((slideData, idx) => {
+      const titleEl = document.querySelector(`[data-slide-title="${idx}"]`);
+      const subEl = document.querySelector(`[data-slide-sub="${idx}"]`);
+      if (titleEl && slideData.title) titleEl.textContent = slideData.title;
+      if (subEl && slideData.sub) subEl.textContent = slideData.sub;
+    });
+  }
+
   function setLanguage(lang) {
     if (!TRANSLATIONS[lang]) lang = 'uz';
     currentLang = lang;
@@ -39,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
         el.setAttribute('placeholder', dict[key]);
       }
     });
+
+    // Update destination slide texts
+    updateSlideTranslations(dict);
   }
 
   // Check URL query param ?lang= or saved localStorage
@@ -90,13 +103,100 @@ document.addEventListener('DOMContentLoaded', () => {
         utm_campaign: utmData.utm_campaign || '',
         path: window.location.pathname
       })
-    }).catch(() => {
-      // Background ping, fail silently
-    });
+    }).catch(() => {});
   } catch (e) {}
 
   // -------------------------------------------------------------
-  // 4. Uzbekistan Phone Number Mask (+998)
+  // 4. 5-Second Automated Destination Carousel
+  // -------------------------------------------------------------
+  const carouselEl = document.getElementById('heroCarousel');
+  const slides = document.querySelectorAll('.carousel-slide');
+  const dots = document.querySelectorAll('.carousel-dot');
+  let currentSlideIndex = 0;
+  let carouselInterval = null;
+
+  function goToSlide(index) {
+    if (slides.length === 0) return;
+    currentSlideIndex = (index + slides.length) % slides.length;
+
+    slides.forEach((slide, idx) => {
+      if (idx === currentSlideIndex) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    dots.forEach((dot, idx) => {
+      if (idx === currentSlideIndex) {
+        dot.classList.add('active');
+      } else {
+        dot.classList.remove('active');
+      }
+    });
+  }
+
+  function nextSlide() {
+    goToSlide(currentSlideIndex + 1);
+  }
+
+  function startCarousel() {
+    if (carouselInterval) clearInterval(carouselInterval);
+    carouselInterval = setInterval(nextSlide, 5000);
+  }
+
+  function resetCarouselTimer() {
+    startCarousel();
+  }
+
+  // Click on dots
+  dots.forEach(dot => {
+    dot.addEventListener('click', (e) => {
+      e.preventDefault();
+      const slideIndex = parseInt(dot.getAttribute('data-slide'), 10);
+      goToSlide(slideIndex);
+      resetCarouselTimer();
+    });
+  });
+
+  // Touch Swipe support for mobile devices
+  if (carouselEl) {
+    let startX = 0;
+    let endX = 0;
+
+    carouselEl.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    }, { passive: true });
+
+    carouselEl.addEventListener('touchend', (e) => {
+      endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      if (Math.abs(diff) > 40) {
+        if (diff > 0) {
+          // Swipe left -> next
+          goToSlide(currentSlideIndex + 1);
+        } else {
+          // Swipe right -> prev
+          goToSlide(currentSlideIndex - 1);
+        }
+        resetCarouselTimer();
+      }
+    }, { passive: true });
+
+    // Optional pause on hover (desktop)
+    carouselEl.addEventListener('mouseenter', () => {
+      if (carouselInterval) clearInterval(carouselInterval);
+    });
+    carouselEl.addEventListener('mouseleave', () => {
+      startCarousel();
+    });
+  }
+
+  // Launch the 5-second automated carousel
+  startCarousel();
+
+  // -------------------------------------------------------------
+  // 5. Uzbekistan Phone Number Mask (+998)
   // -------------------------------------------------------------
   const phoneInput = document.getElementById('leadPhone');
 
@@ -144,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------
-  // 5. Smooth Scroll to Form
+  // 6. Smooth Scroll to Form
   // -------------------------------------------------------------
   const scrollToFormBtns = document.querySelectorAll('.scroll-to-form');
   const formSection = document.getElementById('leadSection');
@@ -163,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // -------------------------------------------------------------
-  // 6. Sticky Mobile CTA visibility on scroll
+  // 7. Sticky Mobile CTA visibility on scroll
   // -------------------------------------------------------------
   const stickyCta = document.querySelector('.sticky-mobile-cta');
   const heroSection = document.querySelector('.hero-section');
@@ -180,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------
-  // 7. Lead Form Validation & AJAX Submission
+  // 8. Lead Form Validation & AJAX Submission
   // -------------------------------------------------------------
   const leadForm = document.getElementById('leadForm');
   const submitBtn = document.getElementById('submitLeadBtn');
@@ -326,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------
-  // 8. Success Modal
+  // 9. Success Modal
   // -------------------------------------------------------------
   function showSuccess() {
     if (successModal) {

@@ -4,9 +4,19 @@ const TRANSLATIONS = {
     langName: "O'zbekcha",
     heroTitle: "Ucharbek bilan hamyonbop narxda uching!",
     heroSubtitle: "Siz shunchaki qayerga borishni tanlang — Ucharbek hammasini hamyonbop narxda hal qiladi!",
-    heroCta: "Qaynoq turlar bo'yicha ma'lumot olish",
+    heroCta: "Tur paketlar bo'yicha ma'lumot olish",
+    slideBadge: "Ommabop yo'nalish",
     
-    // USP Block (Strictly 3 clean titles, no long redundant texts)
+    // 5 Rotating Destinations
+    slides: [
+      { title: "Turkiya — Antaliya va Istanbul", sub: "O'rta yer dengizi sohillari va unutilmas hamyonbop ta'til" },
+      { title: "Dubay, BAA", sub: "Zamonaviy osmono'par binolar va hashamatli plyajlar" },
+      { title: "Misr — Sharm-al-Shayx", sub: "Qizil dengiz marvaridi va mo'jizaviy qadimiy obidalar" },
+      { title: "Tailand — Phuket oroli", sub: "Ekzotik tabiat, moviy lagunalar va tropik ta'til" },
+      { title: "Maldiv orollari", sub: "Oppoq qumli sohillar va moviy okean rohati" }
+    ],
+    
+    // USP Block (Strictly 3 clean titles)
     usp1Title: "Hamyonbop narxlar",
     usp2Title: "Rasmiy litsenziyaga ega",
     usp3Title: "Doimiy aloqa tizimi",
@@ -31,11 +41,11 @@ const TRANSLATIONS = {
     modalClose: "Tushunarli",
     
     // Sticky CTA
-    stickyCta: "Qaynoq turlar bo'yicha ma'lumot olish",
+    stickyCta: "Tur paketlar bo'yicha ma'lumot olish",
     
     // Footer
     footerPhoneLabel: "Ishonch telefoni:",
-    footerLegal: "© 2026 Ucharbek Innovatsion Turizm Agentligi. Barcha huquqlar himoyalangan. Litsenziya: #TR-99482.",
+    footerLegal: "© 2026 Ucharbek Inavatsion Turizm Agentligi. Barcha huquqlar himoyalangan. Litsenziya: #TR-99482.",
     
     // Validation errors
     errorDest: "Iltimos, boradigan yo'nalishingizni yozing",
@@ -47,7 +57,17 @@ const TRANSLATIONS = {
     langName: "Русский",
     heroTitle: "Летайте по доступным ценам вместе с Ucharbek!",
     heroSubtitle: "Вы просто выбираете направление — Ucharbek организует все по доступным ценам!",
-    heroCta: "Узнать цены на горящие туры",
+    heroCta: "Узнать подробнее о турпакетах",
+    slideBadge: "Популярное направление",
+    
+    // 5 Rotating Destinations
+    slides: [
+      { title: "Турция — Анталья и Стамбул", sub: "Побережье Средиземного моря и незабываемый доступный отдых" },
+      { title: "Дубай, ОАЭ", sub: "Современные небоскребы и великолепные солнечные пляжи" },
+      { title: "Египет — Шарм-эль-Шейх", sub: "Жемчужина Красного моря и древние монументы" },
+      { title: "Таиланд — Пхукет", sub: "Экзотическая природа, лагуны и тропический отдых" },
+      { title: "Мальдивские острова", sub: "Белоснежные пляжи и лазурный океанский уют" }
+    ],
     
     // USP Block
     usp1Title: "Доступные цены",
@@ -74,7 +94,7 @@ const TRANSLATIONS = {
     modalClose: "Понятно",
     
     // Sticky CTA
-    stickyCta: "Узнать цены на туры",
+    stickyCta: "Узнать подробнее о турпакетах",
     
     // Footer
     footerPhoneLabel: "Телефон для справок:",
@@ -90,7 +110,17 @@ const TRANSLATIONS = {
     langName: "English",
     heroTitle: "Fly at Affordable Rates with Ucharbek!",
     heroSubtitle: "Just choose where you want to go — Ucharbek takes care of everything at budget-friendly rates!",
-    heroCta: "Get Hot Tour Deals & Pricing",
+    heroCta: "Get Travel Packages Information",
+    slideBadge: "Popular Destination",
+    
+    // 5 Rotating Destinations
+    slides: [
+      { title: "Turkey — Antalya & Istanbul", sub: "Mediterranean coastlines & unforgettable affordable vacations" },
+      { title: "Dubai, UAE", sub: "Modern skyscrapers, luxury vibes & sunny beaches" },
+      { title: "Egypt — Sharm El Sheikh", sub: "Red Sea coral wonders & majestic ancient sights" },
+      { title: "Thailand — Phuket Island", sub: "Exotic islands, emerald lagoons & tropical retreats" },
+      { title: "Maldives Islands", sub: "Pristine white sand beaches & turquoise ocean serenity" }
+    ],
     
     // USP Block
     usp1Title: "Affordable Prices",
@@ -117,7 +147,7 @@ const TRANSLATIONS = {
     modalClose: "Got it",
     
     // Sticky CTA
-    stickyCta: "Get Tour Information",
+    stickyCta: "Get Travel Packages Information",
     
     // Footer
     footerPhoneLabel: "Direct Hotline:",

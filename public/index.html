@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ucharbek — Innovatsion Hamyonbop Turizm Agentligi</title>
+  <title>Ucharbek — Inavatsion Hamyonbop Turizm Agentligi</title>
   
   <!-- SEO & Social Open Graph -->
   <meta name="description" content="Ucharbek bilan hamyonbop narxda uching! Siz shunchaki qayerga borishni tanlang — Ucharbek hammasini hamyonbop narxda hal qiladi!">
-  <meta property="og:title" content="Ucharbek — Innovatsion Hamyonbop Turizm Agentligi">
+  <meta property="og:title" content="Ucharbek — Inavatsion Hamyonbop Turizm Agentligi">
   <meta property="og:description" content="Ucharbek bilan hamyonbop narxda uching! Siz shunchaki qayerga borishni tanlang — Ucharbek hammasini hamyonbop narxda hal qiladi!">
   <meta property="og:image" content="/assets/travel-realistic-hero.jpg">
   <meta property="og:type" content="website">
@@ -53,7 +53,7 @@
           <img src="/assets/ucharbek-logo.jpg" alt="Ucharbek Logo" class="brand-logo-img">
           <div class="brand-logo-text">
             <span class="brand-name">UCHAR<span class="brand-highlight">BEK</span></span>
-            <span class="brand-tagline">INNOVATIVE TRAVEL</span>
+            <span class="brand-tagline">INAVATSION TURIZM</span>
           </div>
         </a>
         
@@ -96,19 +96,74 @@
 
             <div class="hero-cta-wrap">
               <a href="#leadSection" class="btn-primary-cta scroll-to-form">
-                <span data-i18n="heroCta">Qaynoq turlar bo'yicha ma'lumot olish</span>
+                <span data-i18n="heroCta">Tur paketlar bo'yicha ma'lumot olish</span>
                 <span class="btn-arrow">➔</span>
               </a>
             </div>
           </div>
 
-          <!-- Right: Visual Media Showcase (Realistic Travel Photo) -->
+          <!-- Right: Visual Media Showcase (Dynamic 5-second Destination Carousel) -->
           <div class="hero-visual">
-            <div class="hero-media-card">
-              <img src="/assets/travel-realistic-hero.jpg" alt="Hamyonbop sayohatlar Ucharbek bilan" class="hero-image" loading="eager">
-              <div class="hero-image-overlay">
-                <div class="overlay-heading">Turkiya • Dubay • Misr • Tailand</div>
-                <div class="overlay-sub">Hamyonbop sayohat paketlari</div>
+            <div class="hero-carousel-card" id="heroCarousel" role="region" aria-label="Mashhur sayohat yo'nalishlari">
+              <div class="carousel-track">
+                <!-- Slide 0: Turkiya -->
+                <div class="carousel-slide active" data-index="0">
+                  <img src="/assets/dest-turkiya.jpg" alt="Turkiya — Antaliya va Istanbul" class="hero-image" loading="eager">
+                  <div class="hero-image-overlay">
+                    <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
+                    <div class="overlay-heading" data-slide-title="0">Turkiya — Antaliya va Istanbul</div>
+                    <div class="overlay-sub" data-slide-sub="0">O'rta yer dengizi sohillari va unutilmas hamyonbop ta'til</div>
+                  </div>
+                </div>
+
+                <!-- Slide 1: Dubay -->
+                <div class="carousel-slide" data-index="1">
+                  <img src="/assets/dest-dubay.jpg" alt="Dubay, BAA" class="hero-image" loading="lazy">
+                  <div class="hero-image-overlay">
+                    <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
+                    <div class="overlay-heading" data-slide-title="1">Dubay, BAA</div>
+                    <div class="overlay-sub" data-slide-sub="1">Zamonaviy osmono'par binolar va hashamatli plyajlar</div>
+                  </div>
+                </div>
+
+                <!-- Slide 2: Misr -->
+                <div class="carousel-slide" data-index="2">
+                  <img src="/assets/dest-misr.jpg" alt="Misr — Sharm-al-Shayx" class="hero-image" loading="lazy">
+                  <div class="hero-image-overlay">
+                    <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
+                    <div class="overlay-heading" data-slide-title="2">Misr — Sharm-al-Shayx</div>
+                    <div class="overlay-sub" data-slide-sub="2">Qizil dengiz marvaridi va mo'jizaviy qadimiy obidalar</div>
+                  </div>
+                </div>
+
+                <!-- Slide 3: Tailand -->
+                <div class="carousel-slide" data-index="3">
+                  <img src="/assets/dest-tailand.jpg" alt="Tailand — Phuket oroli" class="hero-image" loading="lazy">
+                  <div class="hero-image-overlay">
+                    <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
+                    <div class="overlay-heading" data-slide-title="3">Tailand — Phuket oroli</div>
+                    <div class="overlay-sub" data-slide-sub="3">Ekzotik tabiat, moviy lagunalar va tropik ta'til</div>
+                  </div>
+                </div>
+
+                <!-- Slide 4: Maldiv -->
+                <div class="carousel-slide" data-index="4">
+                  <img src="/assets/dest-maldiv.jpg" alt="Maldiv orollari" class="hero-image" loading="lazy">
+                  <div class="hero-image-overlay">
+                    <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
+                    <div class="overlay-heading" data-slide-title="4">Maldiv orollari</div>
+                    <div class="overlay-sub" data-slide-sub="4">Oppoq qumli sohillar va moviy okean rohati</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Carousel Pagination Dots -->
+              <div class="carousel-dots" id="carouselDots" aria-label="Slaydlarni tanlash">
+                <button type="button" class="carousel-dot active" data-slide="0" aria-label="1-yo'nalish: Turkiya"></button>
+                <button type="button" class="carousel-dot" data-slide="1" aria-label="2-yo'nalish: Dubay"></button>
+                <button type="button" class="carousel-dot" data-slide="2" aria-label="3-yo'nalish: Misr"></button>
+                <button type="button" class="carousel-dot" data-slide="3" aria-label="4-yo'nalish: Tailand"></button>
+                <button type="button" class="carousel-dot" data-slide="4" aria-label="5-yo'nalish: Maldiv"></button>
               </div>
             </div>
           </div>
@@ -310,7 +365,7 @@
         </div>
 
         <p class="footer-legal-text" data-i18n="footerLegal">
-          © 2026 Ucharbek Innovatsion Turizm Agentligi. Barcha huquqlar himoyalangan. Litsenziya: #TR-99482.
+          © 2026 Ucharbek Inavatsion Turizm Agentligi. Barcha huquqlar himoyalangan. Litsenziya: #TR-99482.
         </p>
       </div>
     </div>
