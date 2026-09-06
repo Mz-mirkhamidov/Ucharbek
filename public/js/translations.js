@@ -27,7 +27,7 @@ const TRANSLATIONS = {
     fieldPhonePlaceholder: "+998 (__) ___-__-__",
     formSubmitBtn: "Ariza qoldirish",
     formSubmitting: "Yuborilmoqda...",
-    formPrivacy: "🔒 Ma'lumotlaringiz xavfsizligi 100% kafolatlanadi. Reklama tarqatilmaydi.",
+    formPrivacy: "🔒 Ma'lumotlaringiz maxfiyligi qat'iy himoyalangan. Begona reklama yuborilmaydi.",
     
     // Success Modal
     modalTitle: "Arizangiz muvaffaqiyatli qabul qilindi!",
@@ -35,7 +35,7 @@ const TRANSLATIONS = {
     modalClose: "Tushunarli",
     
     // Sticky CTA
-    stickyCta: "Qaynoq turlar narxlarini bilish",
+    stickyCta: "Qaynoq turlar bo'yicha ma'lumot olish",
     
     // Footer
     footerPhoneLabel: "Ishonch telefoni:",
@@ -121,7 +121,7 @@ const TRANSLATIONS = {
     fieldPhonePlaceholder: "+998 (__) ___-__-__",
     formSubmitBtn: "Submit Request",
     formSubmitting: "Sending...",
-    formPrivacy: "🔒 100% Privacy Guaranteed. No spam, ever.",
+    formPrivacy: "🔒 Your personal information is strictly protected. No spam.",
     
     // Success Modal
     modalTitle: "Application Received Successfully!",
@@ -129,7 +129,7 @@ const TRANSLATIONS = {
     modalClose: "Got it",
     
     // Sticky CTA
-    stickyCta: "Get Tour Deals",
+    stickyCta: "Get Tour Information",
     
     // Footer
     footerPhoneLabel: "Direct Hotline:",

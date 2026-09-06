@@ -12,16 +12,22 @@
   --primary-blue-dark: #003db3;
   --primary-blue-light: #e8f0fe;
   --primary-yellow: #F9CB02;
-  --primary-yellow-hover: #e0b602;
-  --primary-yellow-light: #fff9db;
-  --text-dark: #1A1A1A;
-  --text-muted: #5f6368;
-  --bg-main: #FFFFFF;
-  --bg-card: #FFFFFF;
-  --border-color: #E2E8F0;
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
-  --shadow-md: 0 10px 25px -5px rgba(0, 84, 223, 0.1);
-  --shadow-lg: 0 20px 35px -5px rgba(0, 84, 223, 0.18);
+  --primary-yellow-hover: #ffd624;
+  --primary-yellow-light: rgba(249, 203, 2, 0.2);
+  --text-dark: #FFFFFF;
+  --text-muted: #d0e1fd;
+  --bg-main: #0045ba;
+  --bg-card: rgba(255, 255, 255, 0.08);
+  --border-color: rgba(255, 255, 255, 0.18);
+  --header-bg: rgba(0, 46, 138, 0.94);
+  --header-text: #FFFFFF;
+  --hero-bg: linear-gradient(135deg, #002570 0%, #004ecc 50%, #003099 100%);
+  --form-bg: #00369c;
+  --footer-bg: #001f5c;
+  --footer-text: #c0d7fd;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 12px 28px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 20px 45px rgba(0, 0, 0, 0.35);
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 22px;
@@ -31,108 +37,49 @@
 }
 
 /* ==========================================================================
-   VARIANT A — MINIMAL & ZAMONAVIY (Default)
-   Clean white/light bg, blue & yellow accents, lots of whitespace, premium-lite
-   ========================================================================== */
-body.variant-a {
-  --bg-main: #FAFBFC;
-  --bg-card: #FFFFFF;
-  --text-dark: #111827;
-  --text-muted: #4B5563;
-  --border-color: #E5E7EB;
-  --header-bg: rgba(255, 255, 255, 0.94);
-  --header-text: #111827;
-  --hero-bg: radial-gradient(circle at 80% 20%, rgba(0, 84, 223, 0.05) 0%, rgba(255,255,255,1) 70%);
-  --form-bg: #FFFFFF;
-  --footer-bg: #F3F4F6;
-  --footer-text: #4B5563;
-}
-
-/* ==========================================================================
-   VARIANT B — TO'LIQ BREND RANGIDA (Bold)
+   VARIANT B — TO'LIQ BREND RANGIDA (Asosiy va Yagona Dizayn)
    Deep #0054DF gradient, energetic yellow text & highlights, high contrast
    ========================================================================== */
-body.variant-b {
+body, body.variant-b {
   --bg-main: #0045ba;
   --bg-card: rgba(255, 255, 255, 0.08);
   --text-dark: #FFFFFF;
   --text-muted: #d0e1fd;
   --border-color: rgba(255, 255, 255, 0.18);
-  --header-bg: rgba(0, 54, 156, 0.94);
+  --header-bg: rgba(0, 46, 138, 0.94);
   --header-text: #FFFFFF;
-  --hero-bg: linear-gradient(135deg, #002e8a 0%, #0054DF 50%, #003aab 100%);
+  --hero-bg: linear-gradient(135deg, #002570 0%, #004ecc 50%, #003099 100%);
   --form-bg: #00369c;
-  --footer-bg: #00266e;
+  --footer-bg: #001f5c;
   --footer-text: #c0d7fd;
 }
-body.variant-b .usp-card {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+.usp-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   backdrop-filter: blur(8px);
 }
-body.variant-b .lead-card {
-  background: #003ca8;
+.lead-card {
+  background: linear-gradient(180deg, #003ca8 0%, #002f85 100%);
   border: 2px solid #F9CB02;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4), 0 0 25px rgba(249, 203, 2, 0.15);
 }
-body.variant-b .form-control {
+.form-control {
   background: #FFFFFF;
   color: #111827;
   border-color: #E2E8F0;
 }
-body.variant-b .form-control:focus {
+.form-control:focus {
   border-color: #F9CB02;
   box-shadow: 0 0 0 4px rgba(249, 203, 2, 0.35);
 }
-body.variant-b .lead-title {
+.lead-title {
   color: #FFFFFF;
 }
-body.variant-b .lead-subtitle {
+.lead-subtitle {
   color: #dbeafe;
 }
-body.variant-b .form-label {
+.form-label {
   color: #FFFFFF;
-}
-
-/* ==========================================================================
-   VARIANT C — PREMIUM & HASHAMATLI
-   Ultra-dark navy/black gradient, gold glowing accents, elite luxury vibe
-   ========================================================================== */
-body.variant-c {
-  --bg-main: #060b14;
-  --bg-card: rgba(18, 28, 48, 0.7);
-  --text-dark: #F9FAFB;
-  --text-muted: #9CA3AF;
-  --border-color: rgba(249, 203, 2, 0.22);
-  --header-bg: rgba(6, 11, 20, 0.96);
-  --header-text: #FFFFFF;
-  --hero-bg: radial-gradient(circle at 50% 10%, rgba(0, 84, 223, 0.18) 0%, #060b14 80%);
-  --form-bg: #0c1527;
-  --footer-bg: #03060c;
-  --footer-text: #9CA3AF;
-}
-body.variant-c .usp-card {
-  background: rgba(14, 23, 42, 0.75);
-  border: 1px solid rgba(249, 203, 2, 0.25);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-}
-body.variant-c .lead-card {
-  background: linear-gradient(180deg, #0f1c33 0%, #0a1324 100%);
-  border: 1px solid rgba(249, 203, 2, 0.4);
-  box-shadow: 0 0 45px rgba(249, 203, 2, 0.12), 0 25px 50px rgba(0, 0, 0, 0.7);
-}
-body.variant-c .form-control {
-  background: #152238;
-  color: #FFFFFF;
-  border-color: rgba(249, 203, 2, 0.3);
-}
-body.variant-c .form-control:focus {
-  border-color: #F9CB02;
-  box-shadow: 0 0 0 4px rgba(249, 203, 2, 0.25);
-  background: #192a47;
-}
-body.variant-c .form-label {
-  color: #F3F4F6;
 }
 
 /* ==========================================================================
@@ -179,64 +126,6 @@ button {
 }
 
 /* ==========================================================================
-   LIVE PREVIEW TOOLBAR (Top Switcher)
-   ========================================================================== */
-.preview-bar {
-  background: #0f172a;
-  color: #e2e8f0;
-  padding: 8px 16px;
-  font-size: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid #1e293b;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  backdrop-filter: blur(10px);
-}
-.preview-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-.preview-badge {
-  background: #F9CB02;
-  color: #111827;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-.variant-buttons {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-.variant-btn {
-  background: #1e293b;
-  color: #94a3b8;
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  transition: var(--transition);
-  border: 1px solid transparent;
-}
-.variant-btn:hover {
-  background: #334155;
-  color: #ffffff;
-}
-.variant-btn.active {
-  background: #0054DF;
-  color: #ffffff;
-  border-color: #F9CB02;
-}
-
-/* ==========================================================================
    HEADER
    Logo (left) + Lang switcher (right) — strictly no distracting menu
    ========================================================================== */
@@ -245,7 +134,7 @@ button {
   border-bottom: 1px solid var(--border-color);
   backdrop-filter: blur(12px);
   position: sticky;
-  top: 37px;
+  top: 0;
   z-index: 900;
   transition: var(--transition);
 }
@@ -998,41 +887,9 @@ body.variant-c .modal-close-btn {
 }
 
 @media (max-width: 640px) {
-  /* Ultra-Compact Preview Toolbar for Mobile */
-  .preview-bar {
-    padding: 6px 12px;
-    font-size: 11px;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
-  .preview-title {
-    font-size: 11px;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .preview-badge {
-    font-size: 9px;
-    padding: 2px 5px;
-  }
-  .variant-buttons {
-    display: flex;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .variant-btn {
-    padding: 4px 8px;
-    font-size: 11px;
-    border-radius: 6px;
-  }
-
   /* Compact Native-Feel Mobile Header */
   .site-header {
-    top: 33px;
+    top: 0;
   }
   .header-inner {
     height: 56px;
