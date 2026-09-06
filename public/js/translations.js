@@ -2,19 +2,14 @@
 const TRANSLATIONS = {
   uz: {
     langName: "O'zbekcha",
-    heroBadge: "🔥 Qaynoq turlar va hamyonbop sayohatlar",
     heroTitle: "Ucharbek bilan hamyonbop narxda uching!",
     heroSubtitle: "Siz shunchaki qayerga borishni tanlang — Ucharbek hammasini hamyonbop narxda hal qiladi!",
     heroCta: "Qaynoq turlar bo'yicha ma'lumot olish",
-    destChipsLabel: "Mashhur yo'nalishlar:",
     
-    // USP Block (Strictly 3 clean, authentic USPs)
+    // USP Block (Strictly 3 clean titles, no long redundant texts)
     usp1Title: "Hamyonbop narxlar",
-    usp1Desc: "Har bir sayohat byudjetingizga mos, ortiqcha to'lovlarsiz qulay narxlarda taqdim etiladi",
     usp2Title: "Rasmiy litsenziyaga ega",
-    usp2Desc: "Xavfsiz va qonuniy sayohat uchun davlat tomonidan tasdiqlangan rasmiy agentlik",
     usp3Title: "Doimiy aloqa tizimi",
-    usp3Desc: "Sayohat boshlanishidan to eson-omon qaytguningizcha barcha savollaringiz bo'yicha yordam beramiz",
     
     // Form Block
     formBadge: "✈️ Joyni band qilish",
@@ -50,19 +45,14 @@ const TRANSLATIONS = {
   },
   ru: {
     langName: "Русский",
-    heroBadge: "🔥 Горящие туры и доступные путешествия",
     heroTitle: "Летайте по доступным ценам вместе с Ucharbek!",
     heroSubtitle: "Вы просто выбираете направление — Ucharbek организует все по доступным ценам!",
     heroCta: "Узнать цены на горящие туры",
-    destChipsLabel: "Популярные направления:",
     
     // USP Block
     usp1Title: "Доступные цены",
-    usp1Desc: "Выгодные предложения под ваш бюджет без лишних переплат",
     usp2Title: "Официальная лицензия",
-    usp2Desc: "Проверенное и надежное агентство для вашей безопасности",
     usp3Title: "Поддержка в путешествии",
-    usp3Desc: "Всегда на связи по всем вопросам от вылета до возвращения",
     
     // Form Block
     formBadge: "✈️ Бронирование",
@@ -98,19 +88,14 @@ const TRANSLATIONS = {
   },
   en: {
     langName: "English",
-    heroBadge: "🔥 Hot Deals & Affordable Vacations",
     heroTitle: "Fly at Affordable Rates with Ucharbek!",
     heroSubtitle: "Just choose where you want to go — Ucharbek takes care of everything at budget-friendly rates!",
     heroCta: "Get Hot Tour Deals & Pricing",
-    destChipsLabel: "Popular destinations:",
     
     // USP Block
     usp1Title: "Affordable Prices",
-    usp1Desc: "Budget-friendly travel options tailored to you without hidden fees",
     usp2Title: "Fully Licensed Agency",
-    usp2Desc: "Certified and trusted tourism agency ensuring your safety and satisfaction",
     usp3Title: "Trip Support",
-    usp3Desc: "Reliable assistance and communication from departure until your safe return",
     
     // Form Block
     formBadge: "✈️ Reserve Your Spot",
