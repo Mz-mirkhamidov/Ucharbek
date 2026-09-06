@@ -1,0 +1,20 @@
+{
+  "name": "ucharbek-landing",
+  "version": "1.0.0",
+  "description": "Ucharbek - Innovatsion Turizm Agentligi High-Conversion Landing Page & Telegram Integratsiyasi",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "tourism",
+    "travel",
+    "landing-page",
+    "telegram-bot",
+    "lead-generation",
+    "high-conversion"
+  ],
+  "author": "Ucharbek Travel",
+  "license": "ISC"
+}

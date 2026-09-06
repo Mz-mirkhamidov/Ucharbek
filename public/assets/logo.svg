@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" fill="none" class="ucharbek-logo">
+  <!-- Dynamic Wing & Aircraft Icon -->
+  <g transform="translate(10, 12)">
+    <!-- Glow / Shadow -->
+    <circle cx="28" cy="28" r="26" fill="#0054DF" fill-opacity="0.12"/>
+    <!-- Outer Wing Orbit -->
+    <path d="M8 32 C12 16, 28 8, 48 14 C44 20, 36 22, 28 26 C20 30, 14 36, 8 32 Z" fill="#F9CB02"/>
+    <!-- Jet Wing Main Shape -->
+    <path d="M12 40 L46 16 C48 14, 52 16, 50 20 L38 34 L54 36 C57 36, 57 40, 54 41 L34 44 L26 52 C24 54, 21 53, 22 50 L25 45 L14 43 C11 43, 10 41, 12 40 Z" fill="#0054DF"/>
+    <!-- Speed Trail Accent -->
+    <path d="M22 28 C28 22, 38 20, 44 22" stroke="#F9CB02" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Star / Sparkle Point -->
+    <polygon points="50,11 51.5,14 54.5,14 52,16 53,19 50,17 47,19 48,16 45.5,14 48.5,14" fill="#F9CB02"/>
+  </g>
+
+  <!-- Typography -->
+  <g transform="translate(78, 48)">
+    <text font-family="'Inter', 'Manrope', system-ui, -apple-system, sans-serif" font-weight="900" font-size="30" letter-spacing="-0.5" fill="currentColor">
+      UCHAR<tspan fill="#F9CB02">BEK</tspan>
+    </text>
+    <text y="15" font-family="'Inter', 'Manrope', system-ui, -apple-system, sans-serif" font-weight="600" font-size="10" letter-spacing="2.8" fill="#F9CB02" text-transform="uppercase" opacity="0.95">
+      INNOVATIVE TRAVEL
+    </text>
+  </g>
+</svg>
