@@ -107,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (e) {}
 
   // -------------------------------------------------------------
+    // -------------------------------------------------------------
   // 4. 5-Second Automated Destination Carousel
   // -------------------------------------------------------------
   const carouselEl = document.getElementById('heroCarousel');
@@ -115,6 +116,15 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentSlideIndex = 0;
   let carouselInterval = null;
 
+  // Preload all destination images immediately
+  slides.forEach(s => {
+    const img = s.querySelector('img');
+    if (img && img.src) {
+      const p = new Image();
+      p.src = img.src;
+    }
+  });
+
   function goToSlide(index) {
     if (slides.length === 0) return;
     currentSlideIndex = (index + slides.length) % slides.length;
@@ -122,8 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
     slides.forEach((slide, idx) => {
       if (idx === currentSlideIndex) {
         slide.classList.add('active');
+        slide.style.opacity = '1';
+        slide.style.visibility = 'visible';
+        slide.style.zIndex = '2';
       } else {
         slide.classList.remove('active');
+        slide.style.opacity = '0';
+        slide.style.visibility = 'hidden';
+        slide.style.zIndex = '1';
       }
     });
 
@@ -135,6 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // Ensure initial slide is 100% active and visible
+  goToSlide(0);
 
   function nextSlide() {
     goToSlide(currentSlideIndex + 1);
@@ -148,6 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function resetCarouselTimer() {
     startCarousel();
   }
+
 
   // Click on dots
   dots.forEach(dot => {
