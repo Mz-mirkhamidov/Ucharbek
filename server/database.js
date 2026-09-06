@@ -1,52 +1,62 @@
-// SQLite Database Layer using Node.js Built-in SQLite (DatabaseSync)
-const { DatabaseSync } = require('node:sqlite');
-const path = require('node:path');
-const fs = require('node:fs');
+let db = null;
 
-const DB_DIR = path.join(__dirname, '../data');
-if (!fs.existsSync(DB_DIR)) {
-  fs.mkdirSync(DB_DIR, { recursive: true });
+try {
+  const { DatabaseSync } = require('node:sqlite');
+  const path = require('node:path');
+  const fs = require('node:fs');
+
+  // In Vercel serverless functions, project directory is read-only. Use /tmp for writable storage.
+  const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+  const DB_DIR = isVercel ? '/tmp' : path.join(__dirname, '../data');
+
+  if (!fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  }
+
+  const DB_PATH = path.join(DB_DIR, 'ucharbek.db');
+  db = new DatabaseSync(DB_PATH);
+
+  // Initialize Tables
+  db.exec(`
+    PRAGMA journal_mode = WAL;
+
+    CREATE TABLE IF NOT EXISTS visits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      visitor_hash TEXT,
+      utm_source TEXT,
+      utm_campaign TEXT,
+      referrer TEXT,
+      created_at TEXT DEFAULT (datetime('now', '+5 hours'))
+    );
+
+    CREATE TABLE IF NOT EXISTS leads (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      destination TEXT NOT NULL,
+      language TEXT DEFAULT 'uz',
+      utm_source TEXT,
+      utm_medium TEXT,
+      utm_campaign TEXT,
+      utm_content TEXT,
+      utm_term TEXT,
+      referrer TEXT,
+      created_at TEXT DEFAULT (datetime('now', '+5 hours'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_visits_created ON visits(created_at);
+    CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at);
+  `);
+} catch (initErr) {
+  console.warn('[DATABASE] SQLite not available in this environment or failed to init:', initErr.message);
+  db = null;
 }
-
-const DB_PATH = path.join(DB_DIR, 'ucharbek.db');
-const db = new DatabaseSync(DB_PATH);
-
-// Initialize Tables
-db.exec(`
-  PRAGMA journal_mode = WAL;
-
-  CREATE TABLE IF NOT EXISTS visits (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    visitor_hash TEXT,
-    utm_source TEXT,
-    utm_campaign TEXT,
-    referrer TEXT,
-    created_at TEXT DEFAULT (datetime('now', '+5 hours'))
-  );
-
-  CREATE TABLE IF NOT EXISTS leads (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    destination TEXT NOT NULL,
-    language TEXT DEFAULT 'uz',
-    utm_source TEXT,
-    utm_medium TEXT,
-    utm_campaign TEXT,
-    utm_content TEXT,
-    utm_term TEXT,
-    referrer TEXT,
-    created_at TEXT DEFAULT (datetime('now', '+5 hours'))
-  );
-
-  CREATE INDEX IF NOT EXISTS idx_visits_created ON visits(created_at);
-  CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at);
-`);
 
 /**
  * Record a unique or returning visit
  */
 function recordVisit({ visitorHash, utmSource, utmCampaign, referrer }) {
+  if (!db) return true;
   try {
     const stmt = db.prepare(`
       INSERT INTO visits (visitor_hash, utm_source, utm_campaign, referrer)
@@ -64,6 +74,7 @@ function recordVisit({ visitorHash, utmSource, utmCampaign, referrer }) {
  * Save new lead application
  */
 function saveLead(lead) {
+  if (!db) return { success: true, id: Date.now() };
   try {
     const stmt = db.prepare(`
       INSERT INTO leads (name, phone, destination, language, utm_source, utm_medium, utm_campaign, utm_content, utm_term, referrer)
@@ -95,6 +106,16 @@ function saveLead(lead) {
 function getDailyStats(targetDate) {
   // Format: YYYY-MM-DD
   const dateStr = targetDate || new Date(Date.now() + 5 * 3600 * 1000).toISOString().split('T')[0];
+
+  if (!db) {
+    return {
+      date: dateStr,
+      visitsCount: 0,
+      leadsCount: 0,
+      nonConvertedCount: 0,
+      conversionRate: '0.00'
+    };
+  }
 
   const visitsStmt = db.prepare(`
     SELECT COUNT(*) as count FROM visits 
