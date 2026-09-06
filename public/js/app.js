@@ -156,10 +156,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------------------------------------------
-  // 5. Smooth Scroll to Form
+  // 5. Smooth Scroll to Form & Quick Destination Chips
   // -------------------------------------------------------------
   const scrollToFormBtns = document.querySelectorAll('.scroll-to-form');
   const formSection = document.getElementById('leadSection');
+  const destInput = document.getElementById('leadDestination');
+  const allDestChips = document.querySelectorAll('.dest-chip, .dest-chip-sm');
+
+  function selectDestination(destName) {
+    if (destInput && destName) {
+      destInput.value = destName;
+      // Remove validation error if active
+      destInput.classList.remove('is-invalid');
+      const errEl = document.getElementById('leadDestinationError');
+      if (errEl) errEl.classList.remove('active');
+
+      // Update active highlight on all chips with matching data-dest
+      allDestChips.forEach(c => {
+        if (c.getAttribute('data-dest') === destName) {
+          c.classList.add('active');
+        } else {
+          c.classList.remove('active');
+        }
+      });
+    }
+  }
+
+  allDestChips.forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      e.preventDefault();
+      const destName = chip.getAttribute('data-dest');
+      selectDestination(destName);
+
+      // If clicked from hero section, scroll to form and focus name
+      if (chip.classList.contains('dest-chip') && formSection) {
+        formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          const nameInput = document.getElementById('leadName');
+          if (nameInput) nameInput.focus();
+        }, 450);
+      } else {
+        // If clicked inside form, focus name input next
+        const nameInput = document.getElementById('leadName');
+        if (nameInput) nameInput.focus();
+      }
+    });
+  });
+
+  // When user types manually into destination input, clear active chips unless exact match
+  if (destInput) {
+    destInput.addEventListener('input', () => {
+      const val = destInput.value.trim().toLowerCase();
+      allDestChips.forEach(c => {
+        if (c.getAttribute('data-dest').toLowerCase() === val) {
+          c.classList.add('active');
+        } else {
+          c.classList.remove('active');
+        }
+      });
+    });
+  }
 
   scrollToFormBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -167,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (formSection) {
         formSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(() => {
-          const destInput = document.getElementById('leadDestination');
           if (destInput) destInput.focus();
         }, 500);
       }

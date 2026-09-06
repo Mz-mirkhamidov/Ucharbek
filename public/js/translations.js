@@ -6,6 +6,7 @@ const TRANSLATIONS = {
     heroTitle: "Ucharbek bilan hamyonbop narxda uching!",
     heroSubtitle: "Siz shunchaki qayerga borishni tanlang — Ucharbek hammasini hamyonbop narxda hal qiladi!",
     heroCta: "Qaynoq turlar bo'yicha ma'lumot olish",
+    destChipsLabel: "Mashhur yo'nalishlar:",
     
     // USP Block (Strictly 3 clean, authentic USPs)
     usp1Title: "Hamyonbop narxlar",
@@ -53,6 +54,7 @@ const TRANSLATIONS = {
     heroTitle: "Летайте по доступным ценам вместе с Ucharbek!",
     heroSubtitle: "Вы просто выбираете направление — Ucharbek организует все по доступным ценам!",
     heroCta: "Узнать цены на горящие туры",
+    destChipsLabel: "Популярные направления:",
     
     // USP Block
     usp1Title: "Доступные цены",
@@ -100,6 +102,7 @@ const TRANSLATIONS = {
     heroTitle: "Fly at Affordable Rates with Ucharbek!",
     heroSubtitle: "Just choose where you want to go — Ucharbek takes care of everything at budget-friendly rates!",
     heroCta: "Get Hot Tour Deals & Pricing",
+    destChipsLabel: "Popular destinations:",
     
     // USP Block
     usp1Title: "Affordable Prices",
