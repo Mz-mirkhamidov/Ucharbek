@@ -5,6 +5,7 @@
      - Universal readability for older & middle-aged visitors (40-65+)
      - High contrast (dark charcoal #0F172A on clean off-white / white)
      - Signature Royal Blue (#003EAF / #0054DF) + Golden Yellow (#F9CB02)
+     - Atmospheric travel background (flight routes watermark + ambient sky glow)
      - 100% consistent desktop and mobile experience
    ========================================================================== */
 
@@ -16,13 +17,16 @@
   --primary-yellow-hover: #ffd624;
   --primary-yellow-light: #FEF3C7;
   --text-dark: #0F172A;
-  --text-muted: #475569;
-  --bg-main: #F4F7FB;
+  --text-muted: #334155;
+  --bg-main: #F4F8FD;
   --bg-card: #FFFFFF;
   --border-color: #E2E8F0;
   --header-bg: #003EAF;
   --header-text: #FFFFFF;
-  --hero-bg: linear-gradient(180deg, #EBF3FE 0%, #F4F7FB 100%);
+  --hero-bg: radial-gradient(at 100% 0%, rgba(0, 84, 223, 0.14) 0px, transparent 55%),
+             radial-gradient(at 0% 25%, rgba(249, 203, 2, 0.22) 0px, transparent 55%),
+             radial-gradient(at 50% 100%, rgba(0, 84, 223, 0.09) 0px, transparent 50%),
+             linear-gradient(180deg, #EDF5FE 0%, #F8FBFF 55%, #EEF5FD 100%);
   --form-bg: #FFFFFF;
   --footer-bg: #0A192F;
   --footer-text: #CBD5E1;
@@ -86,12 +90,12 @@ button {
    ========================================================================== */
 .site-header {
   background: var(--header-bg);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 2px solid rgba(249, 203, 2, 0.35);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
   z-index: 900;
-  box-shadow: 0 4px 16px rgba(0, 46, 138, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 46, 138, 0.2);
 }
 .header-inner {
   display: flex;
@@ -110,8 +114,8 @@ button {
   width: 46px;
   border-radius: 12px;
   object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
 }
 .brand-logo-text {
   display: flex;
@@ -198,19 +202,49 @@ button {
 
 /* ==========================================================================
    HERO BLOCK (Above The Fold)
-   Clean, focused, bold value proposition without clutter
+   Atmospheric Travel Background with Flight Routes Watermark & Sun Ambiance
    ========================================================================== */
 .hero-section {
   background: var(--hero-bg);
-  padding: 56px 0 68px;
+  padding: 56px 0 72px;
   position: relative;
   overflow: hidden;
 }
+
+/* Elegant Flight Routes Watermark (Subtle Travel Ambiance) */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 600' fill='none'%3E%3Cpath d='M-100 420 C 180 480, 320 180, 680 230 C 1020 280, 1150 90, 1500 130' stroke='%230054DF' stroke-width='2.2' stroke-dasharray='8 12' stroke-opacity='0.16'/%3E%3Cpath d='M-50 160 C 350 70, 680 460, 1220 270 C 1360 220, 1460 210, 1550 220' stroke='%23F9CB02' stroke-width='2' stroke-dasharray='10 14' stroke-opacity='0.22'/%3E%3Ccircle cx='680' cy='230' r='5' fill='%230054DF' fill-opacity='0.28'/%3E%3Ccircle cx='1220' cy='270' r='5' fill='%23F9CB02' fill-opacity='0.35'/%3E%3Cpath d='M1495 125 L1512 131 L1498 139 L1502 132 Z' fill='%230054DF' fill-opacity='0.32'/%3E%3Cpath d='M100 80 C 180 50, 260 70, 320 100 C 340 70, 400 60, 440 90 C 480 120, 460 160, 420 170 C 360 180, 120 170, 90 150 C 60 130, 70 90, 100 80 Z' fill='%23FFFFFF' fill-opacity='0.28' filter='blur(6px)'/%3E%3Cpath d='M1100 350 C 1170 320, 1240 340, 1290 370 C 1320 340, 1370 340, 1400 370 C 1430 400, 1410 440, 1370 450 C 1320 460, 1120 450, 1090 430 C 1060 410, 1070 370, 1100 350 Z' fill='%23FFFFFF' fill-opacity='0.25' filter='blur(6px)'/%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Soft Glowing Ambiance Orb */
+.hero-section::after {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -60px;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(0, 84, 223, 0.12) 0%, rgba(249, 203, 2, 0.10) 45%, transparent 70%);
+  filter: blur(60px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 48px;
   align-items: center;
+  position: relative;
+  z-index: 2;
 }
 .hero-content {
   position: relative;
@@ -224,6 +258,7 @@ button {
   letter-spacing: -0.8px;
   margin-bottom: 20px;
   color: #0F172A;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
 }
 .hero-subtitle {
   font-size: 18.5px;
@@ -231,7 +266,7 @@ button {
   color: #334155;
   margin-bottom: 32px;
   max-width: 560px;
-  font-weight: 500;
+  font-weight: 550;
 }
 .hero-cta-wrap {
   display: flex;
@@ -276,13 +311,14 @@ button {
 /* Hero Visual / Travel Card Showcase */
 .hero-visual {
   position: relative;
+  z-index: 2;
 }
 .hero-media-card {
   position: relative;
   border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 20px 45px -10px rgba(0, 62, 175, 0.2);
-  border: 3px solid #FFFFFF;
+  box-shadow: 0 20px 45px -10px rgba(0, 62, 175, 0.22);
+  border: 3.5px solid #FFFFFF;
 }
 .hero-image {
   width: 100%;
@@ -317,11 +353,12 @@ button {
    3 Sleek, High-Impact Cards: Icon + Title Only (No Long Redundant Text)
    ========================================================================== */
 .usp-section {
-  padding: 40px 0 48px;
+  padding: 44px 0 52px;
   position: relative;
   background: #FFFFFF;
   border-top: 1px solid #E2E8F0;
   border-bottom: 1px solid #E2E8F0;
+  box-shadow: 0 4px 16px rgba(0, 62, 175, 0.03);
 }
 .usp-grid {
   display: grid;
@@ -329,7 +366,7 @@ button {
   gap: 20px;
 }
 .usp-card {
-  background: #F8FAFC;
+  background: #F8FAFD;
   border: 1.5px solid #E2E8F0;
   border-radius: var(--radius-md);
   padding: 22px 24px;
@@ -366,24 +403,43 @@ button {
 
 /* ==========================================================================
    LEAD FORM SECTION (Primary Conversion Goal)
-   Crisp White Booking Card with Brand Blue Accents & Scroll Offset
+   Crisp White Booking Card with Atmospheric Soft Blue Sky Background
    ========================================================================== */
 .lead-section {
-  padding: 64px 0 84px;
+  padding: 68px 0 88px;
   position: relative;
-  background: linear-gradient(180deg, #F4F7FB 0%, #E8F0FE 100%);
+  background-color: #EEF5FD;
+  background-image: 
+    radial-gradient(at 0% 100%, rgba(0, 84, 223, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 20%, rgba(249, 203, 2, 0.18) 0px, transparent 50%),
+    linear-gradient(180deg, #F8FAFD 0%, #E8F2FD 100%);
   scroll-margin-top: 90px;
+  overflow: hidden;
 }
+
+/* Soft flight route watermark in lead section */
+.lead-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 600' fill='none'%3E%3Cpath d='M100 500 C 500 450, 800 150, 1400 250' stroke='%230054DF' stroke-width='2' stroke-dasharray='10 14' stroke-opacity='0.12'/%3E%3C/svg%3E");
+  background-size: cover;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .lead-container {
   max-width: 620px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 .lead-card {
   background: #FFFFFF;
   border: 2px solid #0054DF;
   border-radius: 24px;
   padding: 44px 40px;
-  box-shadow: 0 25px 55px -10px rgba(0, 62, 175, 0.15), 0 0 0 1px rgba(0, 84, 223, 0.05);
+  box-shadow: 0 25px 55px -10px rgba(0, 62, 175, 0.16), 0 0 0 1px rgba(0, 84, 223, 0.05);
   position: relative;
   overflow: hidden;
   scroll-margin-top: 90px;
@@ -460,7 +516,7 @@ button {
   font-weight: 500;
   border-radius: var(--radius-md);
   border: 1.5px solid #CBD5E1;
-  background: #F8FAFC;
+  background: #F8FAFD;
   color: #0F172A;
   transition: var(--transition);
 }
@@ -785,9 +841,9 @@ button {
     font-weight: 750;
   }
 
-  /* Hero Section: High Contrast & Readability */
+  /* Hero Section: High Contrast, Vibrant Travel Atmosphere */
   .hero-section {
-    padding: 24px 0 32px;
+    padding: 26px 0 34px;
   }
   .hero-grid {
     display: flex;
@@ -801,7 +857,7 @@ button {
     order: 0;
   }
   .hero-title {
-    font-size: 27px;
+    font-size: 28px;
     line-height: 1.25;
     font-weight: 900;
     letter-spacing: -0.4px;
@@ -809,10 +865,11 @@ button {
     color: #0F172A;
   }
   .hero-subtitle {
-    font-size: 15px;
-    line-height: 1.5;
+    font-size: 15.5px;
+    line-height: 1.55;
     margin-bottom: 22px;
     color: #334155;
+    font-weight: 550;
   }
   .hero-cta-wrap {
     max-width: 100%;
@@ -835,8 +892,8 @@ button {
   /* Realistic Media Card on Mobile */
   .hero-media-card {
     border-radius: 18px;
-    border: 2.5px solid #FFFFFF;
-    box-shadow: 0 12px 28px rgba(0, 62, 175, 0.12);
+    border: 3px solid #FFFFFF;
+    box-shadow: 0 12px 28px rgba(0, 62, 175, 0.14);
   }
   .hero-image {
     height: 210px;
@@ -853,7 +910,7 @@ button {
 
   /* USP Block: 3 High-Scannability White Cards (Icon + Title Only) */
   .usp-section {
-    padding: 20px 0 28px;
+    padding: 22px 0 28px;
     background: #FFFFFF;
   }
   .usp-grid {
@@ -867,7 +924,7 @@ button {
     padding: 15px 18px;
     border-radius: 14px;
     gap: 14px;
-    background: #F8FAFC;
+    background: #F8FAFD;
     border: 1.5px solid #E2E8F0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   }
@@ -893,14 +950,14 @@ button {
 
   /* High-Converting Mobile Lead Form */
   .lead-section {
-    padding: 30px 0 44px;
+    padding: 32px 0 46px;
     scroll-margin-top: 75px;
   }
   .lead-card {
     padding: 30px 20px;
     border-radius: 20px;
     border: 2px solid #0054DF;
-    box-shadow: 0 16px 36px rgba(0, 62, 175, 0.12);
+    box-shadow: 0 16px 36px rgba(0, 62, 175, 0.14);
     background: #FFFFFF;
     scroll-margin-top: 75px;
   }
@@ -938,7 +995,7 @@ button {
     font-size: 16px;
     border-radius: 12px;
     padding-left: 44px;
-    background: #F8FAFC;
+    background: #F8FAFD;
     color: #0F172A;
     border: 1.5px solid #CBD5E1;
   }
