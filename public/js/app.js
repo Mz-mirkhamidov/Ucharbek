@@ -221,45 +221,143 @@ document.addEventListener('DOMContentLoaded', () => {
   const phoneInput = document.getElementById('leadPhone');
 
   if (phoneInput) {
+    let lastValue = phoneInput.value || '';
+
+    function cleanUzbekDigits(raw) {
+      let digits = (raw || '').replace(/\D/g, '');
+      if (digits.startsWith('998')) {
+        digits = digits.substring(3);
+      } else if (digits.startsWith('8') && digits.length > 9) {
+        digits = digits.substring(1);
+      }
+      return digits.substring(0, 9);
+    }
+
+    function formatUzbekPhone(numbers) {
+      let res = '+998';
+      if (numbers.length > 0) {
+        res += ' (' + numbers.substring(0, 2);
+      }
+      if (numbers.length > 2) {
+        res += ') ' + numbers.substring(2, 5);
+      } else if (numbers.length === 2) {
+        res += ')';
+      }
+      if (numbers.length > 5) {
+        res += '-' + numbers.substring(5, 7);
+      }
+      if (numbers.length > 7) {
+        res += '-' + numbers.substring(7, 9);
+      }
+      return res;
+    }
+
+    function getCursorPosFromDigitsCount(formattedStr, targetDigits) {
+      if (targetDigits <= 0) return 5;
+      let count = 0;
+      for (let i = 0; i < formattedStr.length; i++) {
+        if (/\d/.test(formattedStr[i])) {
+          count++;
+          if (count === targetDigits + 3) {
+            return i + 1;
+          }
+        }
+      }
+      return formattedStr.length;
+    }
+
     phoneInput.addEventListener('focus', () => {
       if (!phoneInput.value.trim()) {
         phoneInput.value = '+998 ';
+        lastValue = phoneInput.value;
+      }
+    });
+
+    phoneInput.addEventListener('blur', () => {
+      const trimmed = phoneInput.value.trim();
+      if (trimmed === '+998' || trimmed === '+998 ' || trimmed === '+998 (' || trimmed === '+998 ()') {
+        phoneInput.value = '';
+        lastValue = '';
+      }
+    });
+
+    phoneInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace') {
+        const start = phoneInput.selectionStart;
+        const end = phoneInput.selectionEnd;
+
+        // Prevent deleting "+998" prefix
+        if (start <= 5 && end <= 5) {
+          e.preventDefault();
+          phoneInput.setSelectionRange(5, 5);
+          return;
+        }
+
+        // If single cursor (no text highlighted)
+        if (start === end && start > 5) {
+          const val = phoneInput.value;
+          const charBefore = val[start - 1];
+
+          // If the character immediately before cursor is a separator ( ) - space )
+          if (charBefore && /\D/.test(charBefore)) {
+            e.preventDefault();
+
+            // Count how many user digits exist before this cursor
+            let digitsBefore = 0;
+            for (let i = 0; i < start; i++) {
+              if (/\d/.test(val[i])) {
+                digitsBefore++;
+              }
+            }
+
+            // Exclude the 3 digits of '998'
+            const uzDigitsBefore = digitsBefore - 3;
+            if (uzDigitsBefore > 0) {
+              const allDigits = cleanUzbekDigits(val);
+              // Delete the digit that precedes this separator
+              const newDigits = allDigits.substring(0, uzDigitsBefore - 1) + allDigits.substring(uzDigitsBefore);
+              const formatted = formatUzbekPhone(newDigits);
+              phoneInput.value = formatted;
+              lastValue = formatted;
+              const newCursor = getCursorPosFromDigitsCount(formatted, uzDigitsBefore - 1);
+              phoneInput.setSelectionRange(newCursor, newCursor);
+            }
+          }
+        }
       }
     });
 
     phoneInput.addEventListener('input', (e) => {
       let val = phoneInput.value;
-      let numbers = val.replace(/\D/g, '');
 
-      if (!numbers.startsWith('998')) {
-        numbers = '998' + numbers;
+      // Handle mobile virtual keyboards where keydown might not fire
+      // If characters were deleted but digit count stayed identical, a delimiter was deleted
+      const prevDigits = cleanUzbekDigits(lastValue);
+      let curDigits = cleanUzbekDigits(val);
+
+      if (val.length < lastValue.length && curDigits.length === prevDigits.length && prevDigits.length > 0) {
+        // User pressed backspace over a delimiter on mobile: drop the last digit
+        curDigits = curDigits.substring(0, curDigits.length - 1);
       }
 
-      numbers = numbers.substring(0, 12);
-
-      let formatted = '+998';
-      const rest = numbers.substring(3);
-
-      if (rest.length > 0) {
-        formatted += ' (' + rest.substring(0, 2);
-      }
-      if (rest.length >= 2) {
-        formatted += ') ' + rest.substring(2, 5);
-      }
-      if (rest.length >= 5) {
-        formatted += '-' + rest.substring(5, 7);
-      }
-      if (rest.length >= 7) {
-        formatted += '-' + rest.substring(7, 9);
+      // Count digits before current cursor to restore cursor position accurately
+      const cursorPos = phoneInput.selectionStart || val.length;
+      let digitsBeforeCursor = 0;
+      for (let i = 0; i < Math.min(cursorPos, val.length); i++) {
+        if (/\d/.test(val[i])) {
+          digitsBeforeCursor++;
+        }
       }
 
+      let uzDigitsBefore = Math.max(0, digitsBeforeCursor - 3);
+      if (uzDigitsBefore > curDigits.length) uzDigitsBefore = curDigits.length;
+
+      const formatted = formatUzbekPhone(curDigits);
       phoneInput.value = formatted;
-    });
+      lastValue = formatted;
 
-    phoneInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace' && phoneInput.value.length <= 5) {
-        e.preventDefault();
-      }
+      const newCursor = getCursorPosFromDigitsCount(formatted, uzDigitsBefore);
+      phoneInput.setSelectionRange(newCursor, newCursor);
     });
   }
 
