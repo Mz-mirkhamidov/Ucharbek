@@ -341,14 +341,16 @@ button {
   height: 100%;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1), transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
-  transform: scale(1.03);
+  transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translate3d(0, 0, 0) scale(1.02);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
   z-index: 1;
 }
 .carousel-slide.active {
   opacity: 1 !important;
   visibility: visible !important;
-  transform: scale(1) !important;
+  transform: translate3d(0, 0, 0) scale(1) !important;
   z-index: 2;
 }
 .hero-image {

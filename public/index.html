@@ -22,8 +22,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Preload Hero Slide Image (Ultra-Fast First Paint) -->
+  <link rel="preload" as="image" href="/assets/dest-turkiya.jpg" fetchpriority="high">
+
   <!-- CSS Styles -->
-  <link rel="stylesheet" href="/css/style.css?v=2.2">
+  <link rel="stylesheet" href="/css/style.css?v=2.5">
 
   <!-- Meta Pixel Code -->
   <script>
@@ -111,7 +114,7 @@
               <div class="carousel-track">
                 <!-- Slide 0: Turkiya -->
                 <div class="carousel-slide active" data-index="0">
-                  <img src="/assets/dest-turkiya.jpg" alt="Turkiya — Antaliya va Istanbul" class="hero-image" loading="eager">
+                  <img src="/assets/dest-turkiya.jpg" alt="Turkiya — Antaliya va Istanbul" class="hero-image" width="1000" height="560" loading="eager" fetchpriority="high" decoding="async">
                   <div class="hero-image-overlay">
                     <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
                     <div class="overlay-heading" data-slide-title="0">Turkiya — Antaliya va Istanbul</div>
@@ -121,7 +124,7 @@
 
                 <!-- Slide 1: Dubay -->
                 <div class="carousel-slide" data-index="1">
-                  <img src="/assets/dest-dubay.jpg" alt="Dubay, BAA" class="hero-image" loading="lazy">
+                  <img src="/assets/dest-dubay.jpg" alt="Dubay, BAA" class="hero-image" width="1000" height="560" loading="lazy" decoding="async">
                   <div class="hero-image-overlay">
                     <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
                     <div class="overlay-heading" data-slide-title="1">Dubay, BAA</div>
@@ -131,7 +134,7 @@
 
                 <!-- Slide 2: Misr -->
                 <div class="carousel-slide" data-index="2">
-                  <img src="/assets/dest-misr.jpg" alt="Misr — Sharm-al-Shayx" class="hero-image" loading="lazy">
+                  <img src="/assets/dest-misr.jpg" alt="Misr — Sharm-al-Shayx" class="hero-image" width="1000" height="560" loading="lazy" decoding="async">
                   <div class="hero-image-overlay">
                     <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
                     <div class="overlay-heading" data-slide-title="2">Misr — Sharm-al-Shayx</div>
@@ -141,7 +144,7 @@
 
                 <!-- Slide 3: Tailand -->
                 <div class="carousel-slide" data-index="3">
-                  <img src="/assets/dest-tailand.jpg" alt="Tailand — Phuket oroli" class="hero-image" loading="lazy">
+                  <img src="/assets/dest-tailand.jpg" alt="Tailand — Phuket oroli" class="hero-image" width="1000" height="560" loading="lazy" decoding="async">
                   <div class="hero-image-overlay">
                     <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
                     <div class="overlay-heading" data-slide-title="3">Tailand — Phuket oroli</div>
@@ -151,7 +154,7 @@
 
                 <!-- Slide 4: Maldiv -->
                 <div class="carousel-slide" data-index="4">
-                  <img src="/assets/dest-maldiv.jpg" alt="Maldiv orollari" class="hero-image" loading="lazy">
+                  <img src="/assets/dest-maldiv.jpg" alt="Maldiv orollari" class="hero-image" width="1000" height="560" loading="lazy" decoding="async">
                   <div class="hero-image-overlay">
                     <span class="overlay-badge" data-i18n="slideBadge">Ommabop yo'nalish</span>
                     <div class="overlay-heading" data-slide-title="4">Maldiv orollari</div>
@@ -400,6 +403,6 @@
 
   <!-- JavaScript Scripts -->
   <script src="/js/translations.js?v=2.2"></script>
-  <script src="/js/app.js?v=2.4"></script>
+  <script src="/js/app.js?v=2.5"></script>
 </body>
 </html>

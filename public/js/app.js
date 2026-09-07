@@ -116,14 +116,24 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentSlideIndex = 0;
   let carouselInterval = null;
 
-  // Preload all destination images immediately
-  slides.forEach(s => {
-    const img = s.querySelector('img');
-    if (img && img.src) {
-      const p = new Image();
-      p.src = img.src;
-    }
-  });
+  // Preload subsequent slides during browser idle time so initial paint is instantaneous
+  const preloadSubsequentSlides = () => {
+    slides.forEach((s, idx) => {
+      if (idx > 0) {
+        const img = s.querySelector('img');
+        if (img && img.src) {
+          const p = new Image();
+          p.src = img.src;
+        }
+      }
+    });
+  };
+
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(preloadSubsequentSlides, { timeout: 2000 });
+  } else {
+    setTimeout(preloadSubsequentSlides, 1000);
+  }
 
   function goToSlide(index) {
     if (slides.length === 0) return;
@@ -387,14 +397,26 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroSection = document.querySelector('.hero-section');
 
   if (stickyCta && heroSection) {
-    window.addEventListener('scroll', () => {
-      const heroBottom = heroSection.getBoundingClientRect().bottom;
-      if (heroBottom < 100) {
-        stickyCta.style.display = 'block';
-      } else {
-        stickyCta.style.display = 'none';
-      }
-    });
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          stickyCta.style.display = entry.isIntersecting ? 'none' : 'block';
+        });
+      }, { rootMargin: '-60px 0px 0px 0px', threshold: 0 });
+      observer.observe(heroSection);
+    } else {
+      let ticking = false;
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            const heroBottom = heroSection.getBoundingClientRect().bottom;
+            stickyCta.style.display = heroBottom < 100 ? 'block' : 'none';
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    }
   }
 
   // -------------------------------------------------------------
