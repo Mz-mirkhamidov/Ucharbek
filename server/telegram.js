@@ -75,7 +75,19 @@ async function notifyNewLead(lead) {
     `🔗 <b>Manba:</b> ${escapeHtml(sourceStr)}`
   ].join('\n');
 
-  return await sendTelegramMessage(message);
+  const groupChatId = process.env.TELEGRAM_CHAT_ID || DEFAULT_LEAD_CHAT_ID;
+  const personalChatId = process.env.TELEGRAM_REPORT_CHAT_ID || DEFAULT_REPORT_CHAT_ID;
+
+  // Send to both Group and Personal Chat simultaneously
+  const results = await Promise.allSettled([
+    sendTelegramMessage(message, groupChatId),
+    sendTelegramMessage(message, personalChatId)
+  ]);
+
+  const groupRes = results[0].status === 'fulfilled' ? results[0].value : { success: false };
+  const personalRes = results[1].status === 'fulfilled' ? results[1].value : { success: false };
+
+  return groupRes.success ? groupRes : personalRes;
 }
 
 /**
