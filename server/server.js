@@ -158,7 +158,7 @@ const server = http.createServer(async (req, res) => {
   // API ROUTE: Get Statistics (/api/stats)
   // -------------------------------------------------------------
   if (req.method === 'GET' && pathname === '/api/stats') {
-    const stats = getDailyStats();
+    const stats = await getDailyStats();
     return sendJsonResponse(res, 200, stats);
   }
 

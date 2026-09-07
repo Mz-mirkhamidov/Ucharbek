@@ -14,21 +14,16 @@ function getTashkentTimeString() {
   return `${day}.${month}.${year}, ${hours}:${minutes}`;
 }
 
+const DEFAULT_BOT_TOKEN = '8470184237:AAEt5xECCzVrUOqZF2mF8GdlPkE78oP8_ng';
+const DEFAULT_LEAD_CHAT_ID = '-1004491595905'; // Ucharbek leadlar (BR) group
+const DEFAULT_REPORT_CHAT_ID = '552003748'; // Bobur personal ID
+
 /**
  * Send raw message to a Telegram Chat ID via Bot API
  */
 async function sendTelegramMessage(text, customChatId = null) {
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = customChatId || process.env.TELEGRAM_CHAT_ID;
-
-  if (!token || !chatId || token === 'YOUR_TELEGRAM_BOT_TOKEN_HERE' || chatId === 'YOUR_TELEGRAM_CHAT_ID_HERE') {
-    console.log('\n[TELEGRAM DEV MODE - TOKEN NOT SET]');
-    console.log('To send real messages, set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID in .env file.');
-    console.log('----------------------------------------------------');
-    console.log(text);
-    console.log('----------------------------------------------------\n');
-    return { success: true, simulated: true };
-  }
+  const token = process.env.TELEGRAM_BOT_TOKEN || DEFAULT_BOT_TOKEN;
+  const chatId = customChatId || process.env.TELEGRAM_CHAT_ID || DEFAULT_LEAD_CHAT_ID;
 
   try {
     const url = `https://api.telegram.org/bot${token}/sendMessage`;
@@ -87,12 +82,12 @@ async function notifyNewLead(lead) {
  * Send Daily Statistical Summary (Format strictly matching TZ)
  */
 async function sendDailyReport(stats) {
-  const targetChatId = process.env.TELEGRAM_REPORT_CHAT_ID || process.env.TELEGRAM_CHAT_ID;
+  const targetChatId = process.env.TELEGRAM_REPORT_CHAT_ID || DEFAULT_REPORT_CHAT_ID;
   const dateParts = (stats.date || '').split('-');
   const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : stats.date;
 
   const message = [
-    `<b>📊 Kunlik hisobot — ${formattedDate}</b>`,
+    `<b>📊 Kunlik hisobot — ${formattedDate}</b> (To'liq 24 soatlik natija)`,
     ``,
     `👀 <b>Sahifaga tashrif:</b> ${stats.visitsCount.toLocaleString()}`,
     `✅ <b>Ariza qoldirganlar:</b> ${stats.leadsCount.toLocaleString()}`,
@@ -102,10 +97,11 @@ async function sendDailyReport(stats) {
 
   const result = await sendTelegramMessage(message, targetChatId);
 
-  // If sending to user's private chat ID failed because they haven't sent /start to the bot yet
-  if (!result.success && process.env.TELEGRAM_REPORT_CHAT_ID && process.env.TELEGRAM_CHAT_ID && targetChatId !== process.env.TELEGRAM_CHAT_ID) {
-    console.warn(`[TELEGRAM] Failed to send report to personal ID ${targetChatId} (${result.error}). Falling back to main group ${process.env.TELEGRAM_CHAT_ID}...`);
-    return await sendTelegramMessage(message, process.env.TELEGRAM_CHAT_ID);
+  // If sending to user's private chat ID failed, fallback to main group
+  if (!result.success) {
+    const fallbackGroup = process.env.TELEGRAM_CHAT_ID || DEFAULT_LEAD_CHAT_ID;
+    console.warn(`[TELEGRAM] Failed to send report to personal ID ${targetChatId} (${result.error}). Falling back to main group ${fallbackGroup}...`);
+    return await sendTelegramMessage(message, fallbackGroup);
   }
 
   return result;

@@ -56,6 +56,10 @@ try {
  * Record a unique or returning visit
  */
 function recordVisit({ visitorHash, utmSource, utmCampaign, referrer }) {
+  const dateStr = new Date(Date.now() + 5 * 3600 * 1000).toISOString().split('T')[0];
+  // Increment persistent cloud counter for serverless environments
+  fetch(`https://abacus.jasoncameron.dev/hit/ucharbek_prod/visits_${dateStr}`).catch(() => {});
+
   if (!db) return true;
   try {
     const stmt = db.prepare(`
@@ -74,6 +78,10 @@ function recordVisit({ visitorHash, utmSource, utmCampaign, referrer }) {
  * Save new lead application
  */
 function saveLead(lead) {
+  const dateStr = new Date(Date.now() + 5 * 3600 * 1000).toISOString().split('T')[0];
+  // Increment persistent cloud counter for serverless environments
+  fetch(`https://abacus.jasoncameron.dev/hit/ucharbek_prod/leads_${dateStr}`).catch(() => {});
+
   if (!db) return { success: true, id: Date.now() };
   try {
     const stmt = db.prepare(`
@@ -101,35 +109,58 @@ function saveLead(lead) {
 
 /**
  * Calculate Daily Conversion Statistics
- * Uses Tashkent time (+5 hours)
+ * Uses Tashkent time (+5 hours).
+ * By default, calculates stats for the PREVIOUS COMPLETED 24h DAY.
  */
-function getDailyStats(targetDate) {
+async function getDailyStats(targetDate) {
   // Format: YYYY-MM-DD
-  const dateStr = targetDate || new Date(Date.now() + 5 * 3600 * 1000).toISOString().split('T')[0];
+  // Default to yesterday in Tashkent time (the full completed 24 hours)
+  const nowUtc5 = new Date(Date.now() + 5 * 3600 * 1000);
+  const yesterdayUtc5 = new Date(nowUtc5.getTime() - 24 * 3600 * 1000);
+  const dateStr = targetDate || yesterdayUtc5.toISOString().split('T')[0];
 
-  if (!db) {
-    return {
-      date: dateStr,
-      visitsCount: 0,
-      leadsCount: 0,
-      nonConvertedCount: 0,
-      conversionRate: '0.00'
-    };
+  let visitsCount = 0;
+  let leadsCount = 0;
+
+  if (db) {
+    try {
+      const visitsStmt = db.prepare(`
+        SELECT COUNT(*) as count FROM visits 
+        WHERE date(created_at) = ?
+      `);
+      const visitsRow = visitsStmt.get(dateStr);
+      if (visitsRow) visitsCount = visitsRow.count;
+
+      const leadsStmt = db.prepare(`
+        SELECT COUNT(*) as count FROM leads 
+        WHERE date(created_at) = ?
+      `);
+      const leadsRow = leadsStmt.get(dateStr);
+      if (leadsRow) leadsCount = leadsRow.count;
+    } catch (e) {
+      console.warn('[DB] SQLite getDailyStats error:', e.message);
+    }
   }
 
-  const visitsStmt = db.prepare(`
-    SELECT COUNT(*) as count FROM visits 
-    WHERE date(created_at) = ?
-  `);
-  const visitsRow = visitsStmt.get(dateStr);
-  const visitsCount = visitsRow ? visitsRow.count : 0;
-
-  const leadsStmt = db.prepare(`
-    SELECT COUNT(*) as count FROM leads 
-    WHERE date(created_at) = ?
-  `);
-  const leadsRow = leadsStmt.get(dateStr);
-  const leadsCount = leadsRow ? leadsRow.count : 0;
+  // Fallback to persistent cloud counter if local SQLite has 0 (e.g. on Vercel serverless)
+  if (visitsCount === 0 && leadsCount === 0) {
+    try {
+      const [vRes, lRes] = await Promise.allSettled([
+        fetch(`https://abacus.jasoncameron.dev/get/ucharbek_prod/visits_${dateStr}`),
+        fetch(`https://abacus.jasoncameron.dev/get/ucharbek_prod/leads_${dateStr}`)
+      ]);
+      if (vRes.status === 'fulfilled' && vRes.value.ok) {
+        const d = await vRes.value.json();
+        visitsCount = parseInt(d.value, 10) || 0;
+      }
+      if (lRes.status === 'fulfilled' && lRes.value.ok) {
+        const d = await lRes.value.json();
+        leadsCount = parseInt(d.value, 10) || 0;
+      }
+    } catch (cloudErr) {
+      console.warn('[STATS] Cloud counter fetch failed:', cloudErr.message);
+    }
+  }
 
   const nonConvertedCount = Math.max(0, visitsCount - leadsCount);
   const conversionRate = visitsCount > 0 ? ((leadsCount / visitsCount) * 100).toFixed(2) : '0.00';

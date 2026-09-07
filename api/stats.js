@@ -10,7 +10,8 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const stats = getDailyStats();
+    const targetDate = req.query?.date;
+    const stats = await getDailyStats(targetDate);
     return res.status(200).json(stats);
   } catch (err) {
     return res.status(500).json({ error: err.message });
