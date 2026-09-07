@@ -15,15 +15,15 @@ function getTashkentTimeString() {
 }
 
 const DEFAULT_BOT_TOKEN = '8470184237:AAEt5xECCzVrUOqZF2mF8GdlPkE78oP8_ng';
-const DEFAULT_LEAD_CHAT_ID = '-1004491595905'; // Ucharbek leadlar (BR) group
-const DEFAULT_REPORT_CHAT_ID = '552003748'; // Bobur personal ID
+const MAIN_GROUP_CHAT_ID = '-1004491595905'; // "Ucharbek leadlar (BR)" Supergroup
+const PERSONAL_ADMIN_CHAT_ID = '552003748'; // Bobur personal chat
 
 /**
  * Send raw message to a Telegram Chat ID via Bot API
  */
 async function sendTelegramMessage(text, customChatId = null) {
   const token = process.env.TELEGRAM_BOT_TOKEN || DEFAULT_BOT_TOKEN;
-  const chatId = customChatId || process.env.TELEGRAM_CHAT_ID || DEFAULT_LEAD_CHAT_ID;
+  const chatId = customChatId || MAIN_GROUP_CHAT_ID;
 
   try {
     const url = `https://api.telegram.org/bot${token}/sendMessage`;
@@ -75,17 +75,11 @@ async function notifyNewLead(lead) {
     `🔗 <b>Manba:</b> ${escapeHtml(sourceStr)}`
   ].join('\n');
 
-  const groupChatId = process.env.TELEGRAM_CHAT_ID || DEFAULT_LEAD_CHAT_ID;
-  const personalChatId = process.env.TELEGRAM_REPORT_CHAT_ID || DEFAULT_REPORT_CHAT_ID;
+  // 1. ASOSIY MANZIL: Guruh ("Ucharbek leadlar (BR)")
+  const groupRes = await sendTelegramMessage(message, MAIN_GROUP_CHAT_ID);
 
-  // Send to both Group and Personal Chat simultaneously
-  const results = await Promise.allSettled([
-    sendTelegramMessage(message, groupChatId),
-    sendTelegramMessage(message, personalChatId)
-  ]);
-
-  const groupRes = results[0].status === 'fulfilled' ? results[0].value : { success: false };
-  const personalRes = results[1].status === 'fulfilled' ? results[1].value : { success: false };
+  // 2. NUSXA: Shaxsiy lichka (Bobur)
+  const personalRes = await sendTelegramMessage(message, PERSONAL_ADMIN_CHAT_ID);
 
   return groupRes.success ? groupRes : personalRes;
 }
@@ -94,7 +88,6 @@ async function notifyNewLead(lead) {
  * Send Daily Statistical Summary (Format strictly matching TZ)
  */
 async function sendDailyReport(stats) {
-  const targetChatId = process.env.TELEGRAM_REPORT_CHAT_ID || DEFAULT_REPORT_CHAT_ID;
   const dateParts = (stats.date || '').split('-');
   const formattedDate = dateParts.length === 3 ? `${dateParts[2]}.${dateParts[1]}.${dateParts[0]}` : stats.date;
 
@@ -107,16 +100,13 @@ async function sendDailyReport(stats) {
     `📈 <b>Konversiya:</b> ${stats.conversionRate}%`
   ].join('\n');
 
-  const result = await sendTelegramMessage(message, targetChatId);
+  // Send daily report to personal chat
+  const personalRes = await sendTelegramMessage(message, PERSONAL_ADMIN_CHAT_ID);
 
-  // If sending to user's private chat ID failed, fallback to main group
-  if (!result.success) {
-    const fallbackGroup = process.env.TELEGRAM_CHAT_ID || DEFAULT_LEAD_CHAT_ID;
-    console.warn(`[TELEGRAM] Failed to send report to personal ID ${targetChatId} (${result.error}). Falling back to main group ${fallbackGroup}...`);
-    return await sendTelegramMessage(message, fallbackGroup);
-  }
+  // Also send daily report to main group
+  const groupRes = await sendTelegramMessage(message, MAIN_GROUP_CHAT_ID);
 
-  return result;
+  return personalRes.success ? personalRes : groupRes;
 }
 
 function escapeHtml(str) {
