@@ -430,6 +430,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
 
         if (response.ok && result.success) {
+          if (typeof fbq === 'function') {
+            try {
+              fbq('track', 'Lead', { content_name: destInput.value.trim() });
+            } catch (e) {}
+          }
           showSuccess();
           leadForm.reset();
         } else {
