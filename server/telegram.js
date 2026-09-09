@@ -21,8 +21,8 @@ function getTashkentTimeString() {
 // TELEGRAM_BOT_TOKEN (Vercel → Settings → Environment Variables) only. If
 // it's missing, we fail loudly instead of silently using a stale/exposed
 // token.
-const MAIN_GROUP_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '-1004491595905'; // "Ucharbek leadlar (BR)" Supergroup
-const PERSONAL_ADMIN_CHAT_ID = process.env.TELEGRAM_REPORT_CHAT_ID || '552003748'; // Bobur personal chat
+const MAIN_GROUP_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '-1004491595905'; // Leadlar guruhi (Group ID: 1004491595905)
+const PERSONAL_ADMIN_CHAT_ID = process.env.TELEGRAM_REPORT_CHAT_ID || '6399335791'; // Admin shaxsiy lichkasi — faqat kunlik hisobotlar uchun
 
 /**
  * Send raw message to a Telegram Chat ID via Bot API
@@ -86,13 +86,14 @@ async function notifyNewLead(lead) {
     `🔗 <b>Manba:</b> ${escapeHtml(sourceStr)}`
   ].join('\n');
 
-  // 1. ASOSIY MANZIL: Guruh ("Ucharbek leadlar (BR)")
+  // Leadlar FAQAT guruhga boradi (shaxsiy lichkaga yubormaymiz)
   const groupRes = await sendTelegramMessage(message, MAIN_GROUP_CHAT_ID);
 
-  // 2. NUSXA: Shaxsiy lichka (Bobur)
-  const personalRes = await sendTelegramMessage(message, PERSONAL_ADMIN_CHAT_ID);
+  if (!groupRes.success) {
+    console.error('[TELEGRAM] Lead guruhga yuborilmadi:', groupRes.error);
+  }
 
-  return groupRes.success ? groupRes : personalRes;
+  return groupRes;
 }
 
 /**
@@ -111,13 +112,14 @@ async function sendDailyReport(stats) {
     `📈 <b>Konversiya:</b> ${stats.conversionRate}%`
   ].join('\n');
 
-  // Send daily report to personal chat
+  // Kunlik hisobot FAQAT admin shaxsiy lichkasiga boradi (guruhga yubormaymiz)
   const personalRes = await sendTelegramMessage(message, PERSONAL_ADMIN_CHAT_ID);
 
-  // Also send daily report to main group
-  const groupRes = await sendTelegramMessage(message, MAIN_GROUP_CHAT_ID);
+  if (!personalRes.success) {
+    console.error('[TELEGRAM] Hisobot shaxsiy lichkaga yuborilmadi:', personalRes.error);
+  }
 
-  return personalRes.success ? personalRes : groupRes;
+  return personalRes;
 }
 
 function escapeHtml(str) {
