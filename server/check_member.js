@@ -1,4 +1,5 @@
-const token = '8470184237:AAEt5xECCzVrUOqZF2mF8GdlPkE78oP8_ng';
+const token = process.env.TELEGRAM_BOT_TOKEN;
+if (!token) { console.error('TELEGRAM_BOT_TOKEN env var is not set. Run with: TELEGRAM_BOT_TOKEN=xxx node check_member.js'); process.exit(1); }
 const groupId = '-1004491595905';
 const userId = '552003748';
 

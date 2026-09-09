@@ -242,10 +242,12 @@
           </div>
 
           <form id="leadForm" class="lead-form" novalidate>
-            <!-- Anti-Spam Honeypot Field (Invisible to real users) -->
+            <!-- Anti-Spam Honeypot Field (Invisible to real users, hidden from autofill/a11y tree) -->
             <div class="hp-field" aria-hidden="true">
-              <input type="text" id="hpWebsite" name="website" tabindex="-1" autocomplete="off">
+              <input type="text" id="hp_check_x7q" name="hp_check_x7q" tabindex="-1" autocomplete="off">
             </div>
+            <!-- Timestamp of form render, used together with the honeypot to tell bots from real users -->
+            <input type="hidden" id="formRenderedAt" value="">
 
             <!-- Field 1: Qayerga sayohat qilmoqchisiz? (1-o'rinda) -->
             <div class="form-group">

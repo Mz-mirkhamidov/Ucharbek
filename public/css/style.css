@@ -639,12 +639,13 @@ button {
   display: block;
 }
 
-/* Honeypot Spam trap (invisible to real visitors) */
+/* Honeypot Spam trap (invisible to real visitors AND removed from a11y/autofill tree) */
 .hp-field {
+  display: none !important;
   opacity: 0;
   position: absolute;
   top: 0;
-  left: 0;
+  left: -9999px;
   height: 0;
   width: 0;
   z-index: -1;

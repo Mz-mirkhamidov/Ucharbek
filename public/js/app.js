@@ -2,6 +2,15 @@
 document.addEventListener('DOMContentLoaded', () => {
   let currentLang = 'uz';
 
+  // Record when the form was rendered, used together with the honeypot
+  // field to tell real (slow, human) submissions from bot/script submissions.
+  // A hidden field is used instead of a plain JS variable so the value
+  // survives even if this script re-runs or is read from elsewhere.
+  const formRenderedAtInput = document.getElementById('formRenderedAt');
+  if (formRenderedAtInput) {
+    formRenderedAtInput.value = String(Date.now());
+  }
+
   // -------------------------------------------------------------
   // 1. Language Switcher (i18n)
   // -------------------------------------------------------------
@@ -231,8 +240,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const phoneInput = document.getElementById('leadPhone');
 
   if (phoneInput) {
-    let lastValue = phoneInput.value || '';
-
+    // Simplified, dependency-free mask. The previous version tried to
+    // preserve exact cursor position while editing in the middle of the
+    // string, using manual character-by-character math on every
+    // keystroke — this broke unpredictably on mobile virtual keyboards
+    // and especially inside the Instagram/Facebook in-app browser
+    // (composition events, autofill, predictive text). This version
+    // always formats forward from the raw digits and leaves the cursor
+    // at the end, which covers the vast majority of real usage (people
+    // type or paste a phone number left-to-right) and is far more
+    // robust across browsers/keyboards.
     function cleanUzbekDigits(raw) {
       let digits = (raw || '').replace(/\D/g, '');
       if (digits.startsWith('998')) {
@@ -262,112 +279,30 @@ document.addEventListener('DOMContentLoaded', () => {
       return res;
     }
 
-    function getCursorPosFromDigitsCount(formattedStr, targetDigits) {
-      if (targetDigits <= 0) return 5;
-      let count = 0;
-      for (let i = 0; i < formattedStr.length; i++) {
-        if (/\d/.test(formattedStr[i])) {
-          count++;
-          if (count === targetDigits + 3) {
-            return i + 1;
-          }
-        }
-      }
-      return formattedStr.length;
-    }
-
     phoneInput.addEventListener('focus', () => {
       if (!phoneInput.value.trim()) {
-        phoneInput.value = '+998 ';
-        lastValue = phoneInput.value;
+        phoneInput.value = '+998 (';
       }
     });
 
     phoneInput.addEventListener('blur', () => {
-      const trimmed = phoneInput.value.trim();
-      if (trimmed === '+998' || trimmed === '+998 ' || trimmed === '+998 (' || trimmed === '+998 ()') {
+      const digits = cleanUzbekDigits(phoneInput.value);
+      if (digits.length === 0) {
         phoneInput.value = '';
-        lastValue = '';
       }
     });
 
+    // Prevent deleting the "+998" prefix; every other edit is handled
+    // by the 'input' listener below, which re-formats from scratch.
     phoneInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace') {
-        const start = phoneInput.selectionStart;
-        const end = phoneInput.selectionEnd;
-
-        // Prevent deleting "+998" prefix
-        if (start <= 5 && end <= 5) {
-          e.preventDefault();
-          phoneInput.setSelectionRange(5, 5);
-          return;
-        }
-
-        // If single cursor (no text highlighted)
-        if (start === end && start > 5) {
-          const val = phoneInput.value;
-          const charBefore = val[start - 1];
-
-          // If the character immediately before cursor is a separator ( ) - space )
-          if (charBefore && /\D/.test(charBefore)) {
-            e.preventDefault();
-
-            // Count how many user digits exist before this cursor
-            let digitsBefore = 0;
-            for (let i = 0; i < start; i++) {
-              if (/\d/.test(val[i])) {
-                digitsBefore++;
-              }
-            }
-
-            // Exclude the 3 digits of '998'
-            const uzDigitsBefore = digitsBefore - 3;
-            if (uzDigitsBefore > 0) {
-              const allDigits = cleanUzbekDigits(val);
-              // Delete the digit that precedes this separator
-              const newDigits = allDigits.substring(0, uzDigitsBefore - 1) + allDigits.substring(uzDigitsBefore);
-              const formatted = formatUzbekPhone(newDigits);
-              phoneInput.value = formatted;
-              lastValue = formatted;
-              const newCursor = getCursorPosFromDigitsCount(formatted, uzDigitsBefore - 1);
-              phoneInput.setSelectionRange(newCursor, newCursor);
-            }
-          }
-        }
+      if (e.key === 'Backspace' && phoneInput.selectionStart <= 5 && phoneInput.selectionEnd <= 5) {
+        e.preventDefault();
       }
     });
 
-    phoneInput.addEventListener('input', (e) => {
-      let val = phoneInput.value;
-
-      // Handle mobile virtual keyboards where keydown might not fire
-      // If characters were deleted but digit count stayed identical, a delimiter was deleted
-      const prevDigits = cleanUzbekDigits(lastValue);
-      let curDigits = cleanUzbekDigits(val);
-
-      if (val.length < lastValue.length && curDigits.length === prevDigits.length && prevDigits.length > 0) {
-        // User pressed backspace over a delimiter on mobile: drop the last digit
-        curDigits = curDigits.substring(0, curDigits.length - 1);
-      }
-
-      // Count digits before current cursor to restore cursor position accurately
-      const cursorPos = phoneInput.selectionStart || val.length;
-      let digitsBeforeCursor = 0;
-      for (let i = 0; i < Math.min(cursorPos, val.length); i++) {
-        if (/\d/.test(val[i])) {
-          digitsBeforeCursor++;
-        }
-      }
-
-      let uzDigitsBefore = Math.max(0, digitsBeforeCursor - 3);
-      if (uzDigitsBefore > curDigits.length) uzDigitsBefore = curDigits.length;
-
-      const formatted = formatUzbekPhone(curDigits);
-      phoneInput.value = formatted;
-      lastValue = formatted;
-
-      const newCursor = getCursorPosFromDigitsCount(formatted, uzDigitsBefore);
-      phoneInput.setSelectionRange(newCursor, newCursor);
+    phoneInput.addEventListener('input', () => {
+      const digits = cleanUzbekDigits(phoneInput.value);
+      phoneInput.value = formatUzbekPhone(digits);
     });
   }
 
@@ -508,10 +443,21 @@ document.addEventListener('DOMContentLoaded', () => {
     leadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      // Check Honeypot spam trap
-      const honeypot = document.getElementById('hpWebsite');
-      if (honeypot && honeypot.value.trim() !== '') {
-        console.warn('Bot submission blocked');
+      // Anti-spam check: combine the honeypot with a timing check so that
+      // real users are never silently blocked just because a mobile
+      // browser/in-app browser autofilled the hidden honeypot field.
+      // Only treat the submission as a bot when BOTH signals agree:
+      //   1) the honeypot field has a value, AND
+      //   2) the form was submitted implausibly fast (a real person
+      //      needs at least ~1.5s to read the form and tap into it).
+      const honeypot = document.getElementById('hp_check_x7q');
+      const honeypotFilled = !!(honeypot && honeypot.value.trim() !== '');
+      const renderedAt = parseInt((formRenderedAtInput && formRenderedAtInput.value) || '0', 10);
+      const msSinceRender = renderedAt ? (Date.now() - renderedAt) : Infinity;
+      const submittedTooFast = msSinceRender < 1500;
+
+      if (honeypotFilled && submittedTooFast) {
+        console.warn('Bot submission blocked (honeypot + fast submit)');
         showSuccess();
         return;
       }
@@ -535,7 +481,12 @@ document.addEventListener('DOMContentLoaded', () => {
         utm_campaign: utmData.utm_campaign || '',
         utm_term: utmData.utm_term || '',
         utm_content: utmData.utm_content || '',
-        submitted_at: new Date().toISOString()
+        submitted_at: new Date().toISOString(),
+        // Sent so the server can run the same honeypot+timing check
+        // independently, for bots that POST to /api/lead directly and skip
+        // this script entirely.
+        hp_check_x7q: honeypot ? honeypot.value.trim() : '',
+        form_rendered_at: renderedAt || null
       };
 
       try {

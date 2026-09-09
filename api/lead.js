@@ -18,9 +18,15 @@ module.exports = async (req, res) => {
   try {
     const data = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
 
-    // Honeypot check
-    if (data.honeypot || data.website) {
-      console.warn('[SECURITY] Bot detected via honeypot field.');
+    // Anti-spam check: same combined logic as the client (honeypot filled
+    // AND implausibly fast submission). A honeypot value alone is not
+    // enough to reject a real lead, since mobile/in-app-browser autofill
+    // can fill it for genuine users too.
+    const honeypotFilled = !!(data.hp_check_x7q && String(data.hp_check_x7q).trim() !== '');
+    const msSinceRender = data.form_rendered_at ? (Date.now() - Number(data.form_rendered_at)) : Infinity;
+    const submittedTooFast = msSinceRender < 1500;
+    if (honeypotFilled && submittedTooFast) {
+      console.warn('[SECURITY] Bot detected via honeypot field + fast submit.');
       return res.status(200).json({ success: true, message: 'Received' });
     }
 

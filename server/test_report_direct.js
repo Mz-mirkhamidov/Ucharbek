@@ -1,4 +1,5 @@
-const token = '8470184237:AAEt5xECCzVrUOqZF2mF8GdlPkE78oP8_ng';
+const token = process.env.TELEGRAM_BOT_TOKEN;
+if (!token) { console.error('TELEGRAM_BOT_TOKEN env var is not set. Run with: TELEGRAM_BOT_TOKEN=xxx node test_report_direct.js'); process.exit(1); }
 const chatId = '552003748';
 
 async function testReportDirect() {

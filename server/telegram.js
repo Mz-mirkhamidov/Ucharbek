@@ -14,16 +14,27 @@ function getTashkentTimeString() {
   return `${day}.${month}.${year}, ${hours}:${minutes}`;
 }
 
-const DEFAULT_BOT_TOKEN = '8470184237:AAEt5xECCzVrUOqZF2mF8GdlPkE78oP8_ng';
-const MAIN_GROUP_CHAT_ID = '-1004491595905'; // "Ucharbek leadlar (BR)" Supergroup
-const PERSONAL_ADMIN_CHAT_ID = '552003748'; // Bobur personal chat
+// Legacy default chat IDs, kept only as a fallback for local dev when the
+// env vars below aren't set — these are NOT secrets (a chat/group ID on its
+// own can't be used to control the bot). The bot token, by contrast, IS a
+// credential and must never be hardcoded: it is read from
+// TELEGRAM_BOT_TOKEN (Vercel → Settings → Environment Variables) only. If
+// it's missing, we fail loudly instead of silently using a stale/exposed
+// token.
+const MAIN_GROUP_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '-1004491595905'; // "Ucharbek leadlar (BR)" Supergroup
+const PERSONAL_ADMIN_CHAT_ID = process.env.TELEGRAM_REPORT_CHAT_ID || '552003748'; // Bobur personal chat
 
 /**
  * Send raw message to a Telegram Chat ID via Bot API
  */
 async function sendTelegramMessage(text, customChatId = null) {
-  const token = process.env.TELEGRAM_BOT_TOKEN || DEFAULT_BOT_TOKEN;
+  const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = customChatId || MAIN_GROUP_CHAT_ID;
+
+  if (!token) {
+    console.error('[TELEGRAM] TELEGRAM_BOT_TOKEN is not set in the environment — message NOT sent. Set it in Vercel → Settings → Environment Variables.');
+    return { success: false, error: 'TELEGRAM_BOT_TOKEN not configured' };
+  }
 
   try {
     const url = `https://api.telegram.org/bot${token}/sendMessage`;

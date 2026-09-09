@@ -1,4 +1,5 @@
-const token = '8470184237:AAEt5xECCzVrUOqZF2mF8GdlPkE78oP8_ng';
+const token = process.env.TELEGRAM_BOT_TOKEN;
+if (!token) { console.error('TELEGRAM_BOT_TOKEN env var is not set. Run with: TELEGRAM_BOT_TOKEN=xxx node check_updates2.js'); process.exit(1); }
 
 async function checkOffset() {
   const res = await fetch(`https://api.telegram.org/bot${token}/getUpdates?offset=-10&limit=10`);
