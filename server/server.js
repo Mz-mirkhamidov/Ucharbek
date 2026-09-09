@@ -26,7 +26,7 @@ if (fs.existsSync(envPath)) {
 }
 
 const { recordVisit, saveLead, getDailyStats } = require('./database');
-const { notifyNewLead } = require('./telegram');
+const { notifyNewLead, sendCurrentStatusReport, PERSONAL_ADMIN_CHAT_ID } = require('./telegram');
 const { appendLeadToGoogleSheet } = require('./googlesheets');
 const { initCronScheduler, triggerReportNow } = require('./cron');
 
@@ -168,6 +168,38 @@ const server = http.createServer(async (req, res) => {
   if ((req.method === 'POST' || req.method === 'GET') && pathname === '/api/report/test') {
     const result = await triggerReportNow();
     return sendJsonResponse(res, 200, result);
+  }
+
+  // -------------------------------------------------------------
+  // API ROUTE: Telegram Webhook (/api/telegram-webhook)
+  // Bot tugmasi ("🔄 Joriy holatni olish") va /hisobot buyrug'ini qabul qiladi
+  // -------------------------------------------------------------
+  if (req.method === 'POST' && pathname === '/api/telegram-webhook') {
+    try {
+      const update = await parseJsonBody(req);
+      const adminId = String(PERSONAL_ADMIN_CHAT_ID);
+
+      if (update.callback_query) {
+        const cq = update.callback_query;
+        const chatId = String(cq.message?.chat?.id || '');
+        const fromId = String(cq.from?.id || '');
+        if (fromId === adminId && cq.data === 'get_current_report') {
+          await sendCurrentStatusReport(chatId);
+        }
+      } else if (update.message && update.message.text) {
+        const chatId = String(update.message.chat?.id || '');
+        const fromId = String(update.message.from?.id || '');
+        const text = update.message.text.trim().toLowerCase();
+        if (fromId === adminId && (text === '/hisobot' || text === '/report')) {
+          await sendCurrentStatusReport(chatId);
+        }
+      }
+
+      return sendJsonResponse(res, 200, { ok: true });
+    } catch (err) {
+      console.error('[TELEGRAM WEBHOOK] Error:', err);
+      return sendJsonResponse(res, 200, { ok: true });
+    }
   }
 
   // -------------------------------------------------------------

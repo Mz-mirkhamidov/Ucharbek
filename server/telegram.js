@@ -1,6 +1,8 @@
 // Telegram Bot Integration for Real-time Leads & Daily Reports
 // Uses native Node.js fetch
 
+const { getDailyStats } = require('./database');
+
 /**
  * Format current timestamp in Tashkent Time (+5)
  */
@@ -27,7 +29,7 @@ const PERSONAL_ADMIN_CHAT_ID = process.env.TELEGRAM_REPORT_CHAT_ID || '639933579
 /**
  * Send raw message to a Telegram Chat ID via Bot API
  */
-async function sendTelegramMessage(text, customChatId = null) {
+async function sendTelegramMessage(text, customChatId = null, replyMarkup = null) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = customChatId || MAIN_GROUP_CHAT_ID;
 
@@ -45,7 +47,8 @@ async function sendTelegramMessage(text, customChatId = null) {
         chat_id: chatId,
         text: text,
         parse_mode: 'HTML',
-        disable_web_page_preview: true
+        disable_web_page_preview: true,
+        ...(replyMarkup ? { reply_markup: replyMarkup } : {})
       })
     });
 
@@ -112,14 +115,60 @@ async function sendDailyReport(stats) {
     `📈 <b>Konversiya:</b> ${stats.conversionRate}%`
   ].join('\n');
 
+  // Har bir kunlik hisobot ostiga "joriy holatni olish" tugmasi qo'shiladi —
+  // admin istalgan vaqtda bosib, ayni damgacha bo'lgan (bugungi, hali
+  // tugamagan kun uchun) statistikani so'rab olishi mumkin.
+  const replyMarkup = {
+    inline_keyboard: [[
+      { text: '🔄 Joriy holatni olish', callback_data: 'get_current_report' }
+    ]]
+  };
+
   // Kunlik hisobot FAQAT admin shaxsiy lichkasiga boradi (guruhga yubormaymiz)
-  const personalRes = await sendTelegramMessage(message, PERSONAL_ADMIN_CHAT_ID);
+  const personalRes = await sendTelegramMessage(message, PERSONAL_ADMIN_CHAT_ID, replyMarkup);
 
   if (!personalRes.success) {
     console.error('[TELEGRAM] Hisobot shaxsiy lichkaga yuborilmadi:', personalRes.error);
   }
 
   return personalRes;
+}
+
+/**
+ * Bugungi (hali tugamagan) kun uchun Toshkent sanasi — "shu vaqtgacha" hisobot uchun
+ */
+function getTodayTashkentDate() {
+  const nowUtc5 = new Date(Date.now() + 5 * 3600 * 1000);
+  return nowUtc5.toISOString().split('T')[0];
+}
+
+/**
+ * "Joriy holat" hisoboti — bugungi kun hali tugamagan bo'lsa ham,
+ * shu daqiqagacha to'plangan statistikani yuboradi. Bot tugmasi yoki
+ * /hisobot buyrug'i orqali chaqiriladi (qarang: api/telegram-webhook.js)
+ */
+async function sendCurrentStatusReport(chatId = null) {
+  const dateStr = getTodayTashkentDate();
+  const stats = await getDailyStats(dateStr);
+  const [datePart, timePart] = getTashkentTimeString().split(', ');
+
+  const message = [
+    `<b>📊 Joriy holat — ${datePart}</b>`,
+    `<i>Bugun soat ${timePart} holatiga (kun hali tugamagan, to'liq emas)</i>`,
+    ``,
+    `👀 <b>Sahifaga tashrif:</b> ${stats.visitsCount.toLocaleString()}`,
+    `✅ <b>Ariza qoldirganlar:</b> ${stats.leadsCount.toLocaleString()}`,
+    `❌ <b>Kirib, ariza qoldirmaganlar:</b> ${stats.nonConvertedCount.toLocaleString()}`,
+    `📈 <b>Konversiya:</b> ${stats.conversionRate}%`
+  ].join('\n');
+
+  const replyMarkup = {
+    inline_keyboard: [[
+      { text: '🔄 Yangilash', callback_data: 'get_current_report' }
+    ]]
+  };
+
+  return sendTelegramMessage(message, chatId || PERSONAL_ADMIN_CHAT_ID, replyMarkup);
 }
 
 function escapeHtml(str) {
@@ -136,5 +185,8 @@ module.exports = {
   sendTelegramMessage,
   notifyNewLead,
   sendDailyReport,
-  getTashkentTimeString
+  sendCurrentStatusReport,
+  getTashkentTimeString,
+  MAIN_GROUP_CHAT_ID,
+  PERSONAL_ADMIN_CHAT_ID
 };
