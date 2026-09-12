@@ -18,16 +18,19 @@ module.exports = async (req, res) => {
   try {
     const data = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
 
-    // Anti-spam check: same combined logic as the client (honeypot filled
-    // AND implausibly fast submission). A honeypot value alone is not
-    // enough to reject a real lead, since mobile/in-app-browser autofill
-    // can fill it for genuine users too.
+    // Anti-spam signal: honeypot filled AND implausibly fast submission.
+    // We never silently drop a submission on this signal alone — Meta's
+    // in-app browser (Instagram/Facebook) can autofill hidden fields and
+    // submit a real ad lead in well under 1.5s, so a hard block here was
+    // discarding genuine leads before they were ever saved or notified.
+    // Instead we flag it and let the lead through; the admin sees the
+    // warning in Telegram and can judge for themselves.
     const honeypotFilled = !!(data.hp_check_x7q && String(data.hp_check_x7q).trim() !== '');
     const msSinceRender = data.form_rendered_at ? (Date.now() - Number(data.form_rendered_at)) : Infinity;
     const submittedTooFast = msSinceRender < 1500;
     if (honeypotFilled && submittedTooFast) {
-      console.warn('[SECURITY] Bot detected via honeypot field + fast submit.');
-      return res.status(200).json({ success: true, message: 'Received' });
+      console.warn('[SECURITY] Suspicious submission (honeypot + fast submit) — flagging, not dropping.');
+      data.suspicious = true;
     }
 
     if (!data.name || !data.phone || !data.destination) {

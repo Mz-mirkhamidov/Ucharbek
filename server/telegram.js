@@ -26,10 +26,16 @@ function getTashkentTimeString() {
 const MAIN_GROUP_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '-1004491595905'; // Leadlar guruhi (Group ID: 1004491595905)
 const PERSONAL_ADMIN_CHAT_ID = process.env.TELEGRAM_REPORT_CHAT_ID || '6399335791'; // Admin shaxsiy lichkasi — faqat kunlik hisobotlar uchun
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /**
- * Send raw message to a Telegram Chat ID via Bot API
+ * Send raw message to a Telegram Chat ID via Bot API.
+ * Retries once on network/API failure so a single transient blip
+ * (timeout, Telegram 5xx) doesn't drop a lead notification.
  */
-async function sendTelegramMessage(text, customChatId = null, replyMarkup = null) {
+async function sendTelegramMessage(text, customChatId = null, replyMarkup = null, attempt = 1) {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = customChatId || MAIN_GROUP_CHAT_ID;
 
@@ -59,7 +65,11 @@ async function sendTelegramMessage(text, customChatId = null, replyMarkup = null
     }
     return { success: true, messageId: data.result.message_id };
   } catch (err) {
-    console.error('Failed to send Telegram message:', err.message);
+    console.error(`Failed to send Telegram message (attempt ${attempt}):`, err.message);
+    if (attempt < 2) {
+      await sleep(700);
+      return sendTelegramMessage(text, customChatId, replyMarkup, attempt + 1);
+    }
     return { success: false, error: err.message };
   }
 }
@@ -80,6 +90,7 @@ async function notifyNewLead(lead) {
   }
 
   const message = [
+    lead.suspicious ? `<b>⚠️ Diqqat: tez to'ldirilgan/shubhali ariza (bot bo'lishi mumkin, tekshiring)</b>\n` : null,
     `<b>🆕 Yangi ariza — Ucharbek</b>`,
     ``,
     `👤 <b>Ism:</b> ${escapeHtml(lead.name)}`,
@@ -87,13 +98,22 @@ async function notifyNewLead(lead) {
     `🌍 <b>Yo'nalish:</b> ${escapeHtml(lead.destination)}`,
     `🕐 <b>Vaqt:</b> ${timeStr}`,
     `🔗 <b>Manba:</b> ${escapeHtml(sourceStr)}`
-  ].join('\n');
+  ].filter(line => line !== null).join('\n');
 
-  // Leadlar FAQAT guruhga boradi (shaxsiy lichkaga yubormaymiz)
+  // ASOSIY: guruhga yuboriladi. Agar guruhga yuborish muvaffaqiyatsiz
+  // bo'lsa (bot chiqarib yuborilgan, chat ID noto'g'ri va h.k.), lead
+  // hech qachon "yo'qolmasligi" uchun adminning shaxsiy chatiga zaxira
+  // sifatida yuboriladi — shu bilan admin har doim xabardor bo'ladi.
   const groupRes = await sendTelegramMessage(message, MAIN_GROUP_CHAT_ID);
 
   if (!groupRes.success) {
     console.error('[TELEGRAM] Lead guruhga yuborilmadi:', groupRes.error);
+    const fallbackMessage = `⚠️ <b>Guruhga yuborib bo'lmadi</b> (${escapeHtml(groupRes.error || 'unknown error')}), shu sabab shaxsiy chatga yuborildi:\n\n${message}`;
+    const fallbackRes = await sendTelegramMessage(fallbackMessage, PERSONAL_ADMIN_CHAT_ID);
+    if (!fallbackRes.success) {
+      console.error('[TELEGRAM] Zaxira (shaxsiy chat) yuborish ham muvaffaqiyatsiz:', fallbackRes.error);
+    }
+    return fallbackRes.success ? fallbackRes : groupRes;
   }
 
   return groupRes;
