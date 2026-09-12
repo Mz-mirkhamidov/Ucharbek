@@ -3,7 +3,7 @@
 
 async function appendLeadToGoogleSheet(lead) {
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  const spreadsheetId = '1W-lf4O16MWs9zeBwBblBB8jo2xEfxHbnwmTRPPtut2I';
+  const spreadsheetId = '14xQTp7nJuIQQjNadl1lwIm7824-joeVR_gWz53vgp2E';
 
   const rowData = {
     spreadsheet_id: spreadsheetId,

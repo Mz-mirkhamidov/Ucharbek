@@ -3,7 +3,7 @@
  * 
  * QANDAY O'RNATILADI:
  * 1. Ushbu Google Jadvalni oching:
- *    https://docs.google.com/spreadsheets/d/1W-lf4O16MWs9zeBwBblBB8jo2xEfxHbnwmTRPPtut2I/edit?gid=692419783#gid=692419783
+ *    https://docs.google.com/spreadsheets/d/14xQTp7nJuIQQjNadl1lwIm7824-joeVR_gWz53vgp2E/edit?usp=sharing
  * 2. Tepada menyudan: Kengaytmalar (Extensions) -> Apps Script (Скрипты) bo'limini bosing.
  * 3. Ochilgan kod muharriridagi eski kodlarni o'chirib, ushbu fayldagi barcha kodni qo'ying.
  * 4. Saqlash (Ctrl+S yoki disketa belgisi) tugmasini bosing.
